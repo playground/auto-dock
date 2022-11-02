@@ -1,0 +1,22 @@
+[
+  {
+    "action": "registerWithPolicy",
+    "type": "scheduled",
+    "when": ""
+  },
+  {
+    "action": "registerWithPolicy",
+    "type": "recurring",
+    "when": ""
+  },
+  {
+    "action": "unregisterAgent",
+    "type": "recurring",
+    "when": ""
+  },
+  {
+    "action": "registerWithPolicy",
+    "type": "recurring",
+    "when": ""
+  }
+]
