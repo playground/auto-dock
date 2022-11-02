@@ -1,0 +1,28 @@
+{
+  "name": "auto-dock-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ljeff@us.ibm.com",
+  "license": "ISC",
+  "dependencies": {
+    "mobile-locator": "^0.6.3",
+    "express": "^4.17.2",
+    "express-fileupload": "^1.2.1",
+    "find-process": "^1.4.7",
+    "follow-redirects": "^1.15.1",
+    "jsonfile": "^6.1.0",
+    "rxjs": "^7.5.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.13",
+    "del-cli": "^4.0.1",
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.15",
+    "typescript": "^4.5.5"
+  }
+}
