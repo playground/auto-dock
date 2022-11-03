@@ -2,6 +2,9 @@ const cp = require('child_process'),
 exec = cp.exec;
 
 let timer;
+const argv: string = process.argv.slice(2).toString()
+const match = argv.match(/--port=/)
+const port = match ? parseInt(argv.replace(match[0], '')) : 3000;
 
 const find = (name) => {
   exec(`ps -ef | grep "${name}"`, {maxBuffer: 1024 * 2000}, (err, stdout, stderr) => {
@@ -17,8 +20,8 @@ const find = (name) => {
       })
       if(!found) {
         clearInterval(timer);
-        console.log('restarting node server here')
-        const child = exec('node dist/auto-dock.js', (err, stdout, stderr) => {
+        console.log(`restarting node server here ${port}`)
+        const child = exec(`node dist/auto-dock.js --port=${port}`, (err, stdout, stderr) => {
         });
         child.stdout.pipe(process.stdout);
         child.on('data', (data) => {

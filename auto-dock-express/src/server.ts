@@ -13,7 +13,7 @@ export class Server {
   params: Params = <Params>{};
   app = express();
   apiUrl = `${process.env.SERVERLESS_ENDPOINT}`
-  constructor() {
+  constructor(private port = 3000) {
     this.initialise()
   }
 
@@ -127,8 +127,8 @@ export class Server {
     //   )
     // });
   
-    app.listen(3000, () => {
-      console.log('Started on 3000');
+    app.listen(this.port, () => {
+      console.log(`Started on ${this.port}`);
     });
   }
 }
