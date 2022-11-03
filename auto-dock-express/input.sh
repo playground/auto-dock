@@ -40,6 +40,7 @@ else
 fi
 
 export HORIZON_URL="http://localhost:8081"
+node dist/find-node.js
 # watch hzn agreement list    
 # oh deploy setup --org $org_id
 #docker run -v /var/run/docker.sock:/var/run/docker.sock -ti docker
