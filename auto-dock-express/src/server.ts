@@ -73,7 +73,7 @@ export class Server {
     })
   
     app.get("/staff", (req: express.Request, res: express.Response) => {
-      res.json(["Jeff", "Joe"]);
+      res.json(["Jeff", "Joe", "John", "Mikio", "Rob", "Sanjeev", "Susan"]);
     });
   
     app.get("/get_weather_info", (req: express.Request, res: express.Response, next) => {
