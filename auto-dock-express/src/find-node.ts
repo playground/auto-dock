@@ -9,8 +9,8 @@ const find = (name) => {
       const lines = stdout.split('\n')
       let found = false;
       lines.forEach((line, i) => {
-        if(line.length > 0 && !line.match(/-ef|grep/) && !line.match(/grep node auto-dock.js/)) {
-          if(line.match(/node auto-dock.js/)) {
+        if(line.length > 0 && !line.match(/-ef|grep/) && !line.match(/grep node dist\/auto-dock.js/)) {
+          if(line.match(/node dist\/auto-dock.js/)) {
             found = true;
           }
         } 
@@ -18,7 +18,7 @@ const find = (name) => {
       if(!found) {
         clearInterval(timer);
         console.log('restarting node server here')
-        const child = exec('node auto-dock.js', (err, stdout, stderr) => {
+        const child = exec('node dist/auto-dock.js', (err, stdout, stderr) => {
         });
         child.stdout.pipe(process.stdout);
         child.on('data', (data) => {
@@ -33,13 +33,13 @@ const find = (name) => {
 }
 
 const exist = (instance) => {
-  return instance.cmd === 'node auto-dock.js';
+  return instance.cmd === 'node dist/auto-dock.js';
 }
 
 const setCheckInterval = (ms) => {
   clearInterval(timer);
   timer = setInterval(() => {
-    find('node auto-dock.js');
+    find('node dist/auto-dock.js');
   }, ms);
 };
 
