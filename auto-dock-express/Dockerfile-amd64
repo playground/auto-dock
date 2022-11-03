@@ -9,8 +9,10 @@ RUN npm install -g npm
 RUN npm install -g hzn-cli
 
 WORKDIR /oh
+COPY . /oh
 
-COPY ./input.sh /oh
+RUN npm install
+RUN npm run build
 
 RUN ["chmod", "+x", "/oh/input.sh"]
 
