@@ -19,6 +19,7 @@ fi
 if [ "${port}" = "" ]
 then
   port=8888
+fi
 
 BASEDIR=$(dirname $0)
 echo ${BASEDIR}
