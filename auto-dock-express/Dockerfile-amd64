@@ -14,10 +14,10 @@ COPY . /oh
 RUN npm install
 RUN npm run build
 
-RUN ["chmod", "+x", "/oh/input.sh"]
-
-ENTRYPOINT ["sh", "/oh/input.sh"]
-
 EXPOSE 3000
 
 CMD [ "npm", "start" ]
+
+RUN ["chmod", "+x", "/oh/input.sh"]
+
+ENTRYPOINT ["sh", "/oh/input.sh"]
