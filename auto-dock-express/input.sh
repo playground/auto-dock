@@ -20,7 +20,7 @@ BASEDIR=$(dirname $0)
 echo ${BASEDIR}
 cd ${BASEDIR}
 
-curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh -o agent-install.sh && sudo chmod +x agent-install.sh
+#curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh -o agent-install.sh && sudo chmod +x agent-install.sh
 echo ${version}
 echo ${css}
 if [ "${css}" = "true" ]

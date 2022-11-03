@@ -19,5 +19,6 @@ EXPOSE 3000
 CMD [ "npm", "start" ]
 
 RUN ["chmod", "+x", "/oh/input.sh"]
+RUN ["chmod", "+x", "/oh/agent-install.sh"]
 
 ENTRYPOINT ["sh", "/oh/input.sh"]
