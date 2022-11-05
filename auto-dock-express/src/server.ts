@@ -5,7 +5,7 @@ import path from 'path';
 import { Observable } from 'rxjs';
 
 import { Utils } from './common';
-import { Params } from './common/params';
+import { HznParams, Params } from './common/params';
 
 export const utils = new Utils();
 
@@ -17,7 +17,7 @@ export class Server {
     this.initialise()
   }
 
-  getParams(params: Params) {
+  getParams(params: HznParams) {
     return Object.assign(this.params, params)
   }
   setCorsHeaders(req: express.Request, res: express.Response) {
@@ -28,7 +28,7 @@ export class Server {
 
   }
   streamData(req: express.Request, res: express.Response, parse = true) {
-    let params = this.getParams(req.query as unknown as Params);
+    let params = this.getParams(req.query as unknown as HznParams);
     let body = ''
     return new Observable((observer) => {
       req.on('data', (data) => {
@@ -96,10 +96,24 @@ export class Server {
       })  
     });
 
-    app.get("/unregisterAgent", (req: express.Request, res: express.Response, next) => {
-      // @ts-ignore
-      let id = req.query.id;
-      utils.httpGet(`${this.apiUrl}/get_crop_info?id=${id}`)
+    app.get("/unregister", (req: express.Request, res: express.Response, next) => {
+      utils.shell(`oh deploy autoUnregister`)
+      .subscribe({
+        next: (data: any) => res.send(data),
+        error: (err: any) => next(err)
+      })  
+    });
+
+    app.get("/register_with_policy", (req: express.Request, res: express.Response, next) => {
+      utils.shell(`oh deploy autoRegisterWithPolicy`)
+      .subscribe({
+        next: (data: any) => res.send(data),
+        error: (err: any) => next(err)
+      })  
+    });
+
+    app.get("/register_with_pattern", (req: express.Request, res: express.Response, next) => {
+      utils.shell(`oh deploy autoRegisterWithPattern`)
       .subscribe({
         next: (data: any) => res.send(data),
         error: (err: any) => next(err)
