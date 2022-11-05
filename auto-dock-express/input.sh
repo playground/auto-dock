@@ -21,6 +21,11 @@ then
   port=8888
 fi
 
+if [ "${HZN_CONFIG_FILE}" != "" ]
+then
+  oh deploy autoUpdateConfigFiles --config_file ${HZN_CONFIG_FILE}
+fi
+
 BASEDIR=$(dirname $0)
 echo ${BASEDIR}
 cd ${BASEDIR}
