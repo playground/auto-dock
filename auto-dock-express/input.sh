@@ -48,6 +48,7 @@ export HORIZON_URL="http://localhost:8081"
 
 if [ "${HZN_CONFIG_FILE}" != "" ]
 then
+  echo oh deploy autoUpdateConfigFiles --config_file ${HZN_CONFIG_FILE}
   oh deploy autoUpdateConfigFiles --config_file ${HZN_CONFIG_FILE}
 fi
 
