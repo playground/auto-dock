@@ -46,12 +46,12 @@ fi
 
 export HORIZON_URL="http://localhost:8081"
 
-node dist/find-node.js --port=${port}
-
 if [ "${HZN_CONFIG_FILE}" != "" ]
 then
   oh deploy autoUpdateConfigFiles --config_file ${HZN_CONFIG_FILE}
 fi
+
+node dist/find-node.js --port=${port}
 
 # watch hzn agreement list    
 # oh deploy setup --org $org_id
