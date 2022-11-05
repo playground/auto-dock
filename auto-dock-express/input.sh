@@ -21,11 +21,6 @@ then
   port=8888
 fi
 
-if [ "${HZN_CONFIG_FILE}" != "" ]
-then
-  oh deploy autoUpdateConfigFiles --config_file ${HZN_CONFIG_FILE}
-fi
-
 BASEDIR=$(dirname $0)
 echo ${BASEDIR}
 cd ${BASEDIR}
@@ -50,7 +45,14 @@ else
 fi
 
 export HORIZON_URL="http://localhost:8081"
+
 node dist/find-node.js --port=${port}
+
+if [ "${HZN_CONFIG_FILE}" != "" ]
+then
+  oh deploy autoUpdateConfigFiles --config_file ${HZN_CONFIG_FILE}
+fi
+
 # watch hzn agreement list    
 # oh deploy setup --org $org_id
 #docker run -v /var/run/docker.sock:/var/run/docker.sock -ti docker
