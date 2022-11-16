@@ -2,20 +2,28 @@
   "name": "auto-dock-express",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "auto-dock.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "rebuild": "del-cli --force dist && npm run build",
+    "build": "tsc",
+    "start": "node dist/find-node.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch && npm run build:watch"
   },
   "author": "ljeff@us.ibm.com",
   "license": "ISC",
   "dependencies": {
-    "mobile-locator": "^0.6.3",
+    "@types/jest": "^29.2.1",
+    "cors": "^2.8.5",
     "express": "^4.17.2",
     "express-fileupload": "^1.2.1",
     "find-process": "^1.4.7",
     "follow-redirects": "^1.15.1",
+    "jest": "^29.2.2",
     "jsonfile": "^6.1.0",
-    "rxjs": "^7.5.2"
+    "mobile-locator": "^0.6.3",
+    "rxjs": "^7.5.2",
+    "ts-jest": "^29.0.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
