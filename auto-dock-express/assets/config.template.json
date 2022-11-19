@@ -1,0 +1,69 @@
+{
+  "hello": "Greeting from IEAM",
+  "events": [
+    {
+      "action": "registerWithPolicy",
+      "type": "scheduled",
+      "start": {
+        "hour": 7,
+        "minute": 15,
+        "meriden": "PM",
+        "format": 12
+      },
+      "end": {
+        "hour": 7,
+        "minute": 15,
+        "meriden": "PM",
+        "format": 12
+      }
+    },
+    {
+      "action": "registerWithPolicy",
+      "type": "recurring",
+      "start": {
+        "hour": 7,
+        "minute": 15,
+        "meriden": "PM",
+        "format": 12
+      },
+      "end": {
+        "hour": 7,
+        "minute": 15,
+        "meriden": "PM",
+        "format": 12
+      }
+    },
+    {
+      "action": "unregisterAgent",
+      "type": "recurring",
+      "start": {
+        "hour": 7,
+        "minute": 15,
+        "meriden": "PM",
+        "format": 12
+      },
+      "end": {
+        "hour": 7,
+        "minute": 15,
+        "meriden": "PM",
+        "format": 12
+      }
+    },
+    {
+      "action": "registerWithPolicy",
+      "type": "recurring",
+      "start": {
+        "hour": 7,
+        "minute": 15,
+        "meriden": "PM",
+        "format": 12
+      },
+      "end": {
+        "hour": 7,
+        "minute": 15,
+        "meriden": "PM",
+        "format": 12
+      }
+    }
+  ]
+}
