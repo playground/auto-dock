@@ -22,8 +22,8 @@
     {
       "action": "autoRegisterWithPattern",
       "type": "recurring",
-      "start": "Sat, 19 Nov 2022 19:15:15 GMT",
-      "end": "Sun, 20 Nov 2022 19:25:15 GMT"
+      "start": "Sat, 19 Nov 2022 20:35:15 GMT",
+      "end": "Sun, 20 Nov 2022 20:38:15 GMT"
     }
   ]
 }

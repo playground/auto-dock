@@ -36,6 +36,19 @@ export class IEAMEvent {
       return false
     }
   }
+  isWithinTimeRange() {
+    if(this.isWithinDateRange()) {
+      const date = new Date()
+      const start = new Date(this.start)
+      const end = new Date(this.end)
+      const time = date.getHours()*3600 + date.getMinutes()*60 + date.getSeconds()
+      const stime = start.getHours()*3600 + start.getMinutes()*60 + start.getSeconds() 
+      const etime = end.getHours()*3600 + end.getMinutes()*60 + end.getSeconds() 
+      return time >= stime && time <= etime
+    } else {
+      return false
+    }
+  }
   isTimeToRun() {
     if(this.isWithinDateRange()) {
       return Date.now() - this.lastRun > this.frequency
@@ -47,7 +60,7 @@ export class IEAMEvent {
     return AllowableActions.indexOf(this.action) >= 0
   }
   isClearToRun() {
-    return this.isActionAllow() && this.isWithinDateRange() && this.isTimeToRun()
+    return this.isActionAllow() && this.isWithinTimeRange() && this.isTimeToRun()
   }
   actionType() {
     return AllowableActions.indexOf(this.action)
