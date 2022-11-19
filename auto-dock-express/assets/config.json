@@ -14,10 +14,16 @@
       "end": "Sun, 20 Nov 2022 17:05:15 GMT"
     },
     {
+      "action": "autoUnregister",
+      "type": "recurring",
+      "start": "Sat, 19 Nov 2022 18:45:15 GMT",
+      "end": "Sun, 20 Nov 2022 19:10:15 GMT"
+    },
+    {
       "action": "autoRegisterWithPattern",
       "type": "recurring",
-      "start": "Sat, 19 Nov 2022 18:00:15 GMT",
-      "end": "Sun, 20 Nov 2022 18:05:15 GMT"
+      "start": "Sat, 19 Nov 2022 19:15:15 GMT",
+      "end": "Sun, 20 Nov 2022 19:25:15 GMT"
     }
   ]
 }

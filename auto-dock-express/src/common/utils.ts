@@ -116,7 +116,9 @@ export class Utils {
           complete: () => {
             this.resetTimer()
           },
-          error: (err) => {}
+          error: (err) => {
+            this.resetTimer()
+          }
         })
       }
     }, ms);
@@ -157,6 +159,9 @@ export class Utils {
                         observer.error(err)
                       }
                     })
+                  } else {
+                    observer.next('')
+                    observer.complete()  
                   }
                 }) 
               break;
