@@ -7,8 +7,9 @@ export class IEAMEvent {
   type: string = '';
   id: string = '';
   action: string = '';
-  start: EventTime = { "hour": 7, "minute": 15, "second": 0, "meriden": "PM", "format": 12 };
-  end: EventTime = { "hour": 7, "minute": 15, "second": 0, "meriden": "PM", "format": 12 };
+  meta: any = {};
+  start: string = '';
+  end: string = '';
   frequency: number = 60000;
   lastRun: number = 0;
 
@@ -16,14 +17,53 @@ export class IEAMEvent {
     Object.assign(this, event)
   }
 
-  getJson() {
-    return {}
+  isValidDate(date: string) {
+    return !isNaN(Date.parse(date))
+  }
+  getStartTime() {
+    return new Date(this.start)
+  }
+  getEndTime() {
+    return new Date(this.end)
+  }
+  isWithinDateRange() {
+    if(this.isValidDate(this.start) && this.isValidDate(this.end)) {
+      const date = new Date()
+      const start = new Date(this.start)
+      const end = new Date(this.end)
+      return date >= start && date <= end
+    } else {
+      return false
+    }
+  }
+  isTimeToRun() {
+    if(this.isWithinDateRange()) {
+      return Date.now() - this.lastRun > this.frequency
+    } else {
+      return false
+    }
+  }
+  isActionAllow() {
+    return AllowableActions.indexOf(this.action) >= 0
+  }
+  isClearToRun() {
+    return this.isActionAllow() && this.isWithinDateRange() && this.isTimeToRun()
+  }
+  actionType() {
+    return AllowableActions.indexOf(this.action)
   }
 }
 
 export const AllowableActions = [
   'autoRegisterWithPolicy', 'autoRegisterWithPattern', 'autoUnregister'
 ]
+
+export enum Action {
+  autoAddNodePolicy = 0,
+  autoRegisterWithPolicy = 1,
+  autoRegisterWithPattern = 2,
+  autoUnregister = 3
+}
 
 export class EventTime {
   hour: number;

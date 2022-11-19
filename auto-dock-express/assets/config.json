@@ -2,68 +2,22 @@
   "hello": "Greeting from IEAM",
   "events": [
     {
-      "action": "registerWithPolicy",
+      "action": "autoRegisterWithPolicy",
       "type": "scheduled",
-      "start": {
-        "hour": 7,
-        "minute": 15,
-        "meriden": "PM",
-        "format": 12
-      },
-      "end": {
-        "hour": 7,
-        "minute": 15,
-        "meriden": "PM",
-        "format": 12
-      }
+      "start": "Sat, 19 Nov 2022 14:00:15 GMT",
+      "end": "Sat, 19 Nov 2022 15:05:15 GMT"
     },
     {
-      "action": "registerWithPolicy",
+      "action": "autoUnregisterAgent",
       "type": "recurring",
-      "start": {
-        "hour": 7,
-        "minute": 15,
-        "meriden": "PM",
-        "format": 12
-      },
-      "end": {
-        "hour": 7,
-        "minute": 15,
-        "meriden": "PM",
-        "format": 12
-      }
+      "start": "Sat, 19 Nov 2022 17:00:15 GMT",
+      "end": "Sun, 20 Nov 2022 17:05:15 GMT"
     },
     {
-      "action": "unregisterAgent",
+      "action": "autoRegisterWithPattern",
       "type": "recurring",
-      "start": {
-        "hour": 7,
-        "minute": 15,
-        "meriden": "PM",
-        "format": 12
-      },
-      "end": {
-        "hour": 7,
-        "minute": 15,
-        "meriden": "PM",
-        "format": 12
-      }
-    },
-    {
-      "action": "registerWithPolicy",
-      "type": "recurring",
-      "start": {
-        "hour": 7,
-        "minute": 15,
-        "meriden": "PM",
-        "format": 12
-      },
-      "end": {
-        "hour": 7,
-        "minute": 15,
-        "meriden": "PM",
-        "format": 12
-      }
+      "start": "Sat, 19 Nov 2022 18:00:15 GMT",
+      "end": "Sun, 20 Nov 2022 18:05:15 GMT"
     }
   ]
 }

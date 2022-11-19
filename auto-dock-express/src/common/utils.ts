@@ -3,8 +3,7 @@ import * as https from 'https';
 import jsonfile from 'jsonfile';
 import { Observable } from 'rxjs';
 
-import { utils } from '../server';
-import { IEAMEvent } from './interface/model';
+import { Action, IEAMEvent } from './interface/model';
 import { HznParams } from './params/hzn-params';
 
 const cp = require('child_process'),
@@ -49,21 +48,17 @@ export class Utils {
       });
     });  
   }
-  unregisterAgent(params: HznParams) {
-    const arg = `oh deploy unregisterAgent`
-    return utils.shell(arg)
+  unregister(params: HznParams) {
+    return this.shell(`oh deploy autoUnregister`)
   }
   registerWithPolicy(params: HznParams) {
-    const arg = `hzn exchange deployment autoRegisterWithpolicy --config_file ${params.name}`
-    return utils.shell(arg)
+    return this.shell(`oh deploy autoRegisterWithPolicy`)
   }
   registerWithPattern(params: HznParams) {
-    const arg = `hzn exchange deployment autoRegisterWithPattern --config_file ${params.name}`
-    return utils.shell(arg)
+    return this.shell(`oh deploy autoRegisterWithPattern`)
   }
   updatePolicy(params: HznParams) {
-    const arg = `hzn exchange deployment autoAddpolicy --config_file ${params.name}`
-    return utils.shell(arg)
+    return this.shell(`oh deploy autoAddpolicy`)
   }
   checkMMS() : any[] {
     try {
@@ -102,7 +97,6 @@ export class Utils {
             this.shell(arg)
             .subscribe({
               next: (res) => {
-                console.log('mv', res)
               },
               complete: () => {
                 console.log('complete')
@@ -116,9 +110,12 @@ export class Utils {
           }
         });
       } else {
+        clearInterval(this.timer);
         this.runTasks()
         .subscribe({
-          complete: () => {},
+          complete: () => {
+            this.resetTimer()
+          },
           error: (err) => {}
         })
       }
@@ -128,19 +125,80 @@ export class Utils {
     return new Observable((observer) => {
       try {
         console.log('run taks')
+        let eventJson = [];
         let json = jsonfile.readFileSync(`${this.assets}/config.json`);
         let ieamEvent: IEAMEvent;
-        json.events.forEach((event: IEAMEvent) => {
+        let running = false;
+        json.events.forEach((event: IEAMEvent, idx) => {
           ieamEvent = new IEAMEvent(event)
-          console.log(ieamEvent)
+          console.log(ieamEvent.isWithinDateRange(), ieamEvent.isActionAllow(), ieamEvent.isClearToRun())
+          //console.log(ieamEvent)
+          if(!running && ieamEvent.isClearToRun()) {
+            running = true
+            switch(ieamEvent.actionType()) {
+              case Action.autoRegisterWithPattern:
+              case Action.autoRegisterWithPolicy: 
+              case Action.autoUnregister: 
+                this.isNodeConfigured()
+                .subscribe((configured) => {
+                  if(configured) {
+                    this.shell(`oh deploy ${ieamEvent.action}`)
+                    .subscribe({
+                      complete: () => {
+                        ieamEvent.lastRun = Date.now()
+                        eventJson.push(Object.assign({},ieamEvent))
+                        json.events = eventJson
+                        jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
+                        observer.next('')
+                        observer.complete()  
+                      },
+                      error: (err) => {
+                        console.log('error', err)
+                        observer.error(err)
+                      }
+                    })
+                  }
+                }) 
+              break;
+              default:
+                running = false;
+                break;
+            }
+          } else {
+            eventJson.push(Object.assign({},ieamEvent))
+          }
         });
-        observer.next('')
-        observer.complete()
+        console.log(eventJson)
+        if(!running) {
+          observer.next('')
+          observer.complete()  
+        }
       } catch(e) {
         console.log(e)
         observer.error(e)
       }
     })
+  }
+  isNodeConfigured() {
+    return new Observable((observer) => {
+      let arg = `hzn node list`
+      this.shell(arg, "Successfully list node", "Failed to list node")
+      .subscribe({
+        next: (res: any) => {
+          console.log(typeof res == 'string')
+          try {
+            let json = JSON.parse(res)
+            console.log(json.configstate.state)
+            observer.next(json.configstate.state === 'configured')
+            observer.complete()
+          } catch(e) {
+            observer.error(e)
+          }
+        }, error(e) {
+          observer.error(e)
+        }
+      })
+    })  
   }
   shell(arg: string, success='command executed successfully', error='command failed', prnStdout=true, options={maxBuffer: 1024 * 2000}) {
     return new Observable((observer) => {
