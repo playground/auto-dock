@@ -126,14 +126,15 @@ export class Utils {
   runTasks() {
     return new Observable((observer) => {
       try {
-        console.log('run taks')
+        console.log('run tasks')
         let eventJson = [];
         let json = jsonfile.readFileSync(`${this.assets}/config.json`);
         let ieamEvent: IEAMEvent;
         let running = false;
         json.events.forEach((event: IEAMEvent, idx) => {
           ieamEvent = new IEAMEvent(event)
-          console.log(ieamEvent.isWithinDateRange(), ieamEvent.isActionAllow(), ieamEvent.isClearToRun())
+          const date = new Date()
+          console.log(ieamEvent.isWithinDateRange(), ieamEvent.isActionAllow(), ieamEvent.isClearToRun(), date.toUTCString())
           //console.log(ieamEvent)
           if(!running && ieamEvent.isClearToRun()) {
             running = true
@@ -142,27 +143,30 @@ export class Utils {
               case Action.autoRegisterWithPolicy: 
               case Action.autoUnregister: 
                 this.isNodeConfigured()
-                .subscribe((configured) => {
-                  if(configured) {
-                    this.shell(`oh deploy ${ieamEvent.action}`)
-                    .subscribe({
-                      complete: () => {
-                        ieamEvent.lastRun = Date.now()
-                        eventJson.push(Object.assign({},ieamEvent))
-                        json.events = eventJson
-                        jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
-                        observer.next('')
-                        observer.complete()  
-                      },
-                      error: (err) => {
-                        console.log('error', err)
-                        observer.error(err)
-                      }
-                    })
-                  } else {
-                    observer.next('')
-                    observer.complete()  
-                  }
+                .subscribe({
+                  next: (configured) => {
+                    if(configured) {
+                      this.shell(`oh deploy ${ieamEvent.action}`)
+                      .subscribe({
+                        complete: () => {
+                          ieamEvent.lastRun = Date.now()
+                          eventJson.push(Object.assign({},ieamEvent))
+                          json.events = eventJson
+                          jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
+                          observer.next('')
+                          observer.complete()  
+                        },
+                        error: (err) => {
+                          console.log('error', err)
+                          observer.error(err)
+                        }
+                      })
+                    } else {
+                      observer.next('')
+                      observer.complete()  
+                    }
+                  },
+                  error: (err) => observer.error(err)
                 }) 
               break;
               default:
