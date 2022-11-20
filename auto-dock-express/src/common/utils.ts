@@ -131,6 +131,7 @@ export class Utils {
         let json = jsonfile.readFileSync(`${this.assets}/config.json`);
         let ieamEvent: IEAMEvent;
         let running = false;
+        let arg = '';
         json.events.forEach((event: IEAMEvent, idx) => {
           ieamEvent = new IEAMEvent(event)
           const date = new Date()
@@ -140,18 +141,29 @@ export class Utils {
             running = true
             switch(ieamEvent.actionType()) {
               case Action.autoRegisterWithPattern:
-              case Action.autoRegisterWithPolicy: 
+              case Action.autoRegisterWithPolicy:
               case Action.autoUnregister: 
-                this.isNodeConfigured()
+                this.getNodeConfig()
                 .subscribe({
-                  next: (configured) => {
-                    if(configured) {
-                      this.shell(`oh deploy ${ieamEvent.action}`)
+                  next: (config: any) => {
+                    console.log('is configured?', config.configstate, typeof config)
+                    arg = `oh deploy ${ieamEvent.action}`
+                    if(ieamEvent.actionType() == Action.autoUnregister) {
+                      if(config.configstate.state === 'configured') {
+                        arg = '';
+                      }
+                    } else {
+                      if(config.configstate.state !== 'configured') {
+                        arg = '';
+                      }
+                    }
+                    if(arg.length > 0) {
+                      this.shell(arg)
                       .subscribe({
                         complete: () => {
                           ieamEvent.lastRun = Date.now()
                           eventJson.push(Object.assign({},ieamEvent))
-                          json.events = eventJson
+                          json.events = eventJson.slice()
                           jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
                           observer.next('')
                           observer.complete()  
@@ -168,7 +180,7 @@ export class Utils {
                   },
                   error: (err) => observer.error(err)
                 }) 
-              break;
+              break; 
               default:
                 running = false;
                 break;
@@ -188,7 +200,7 @@ export class Utils {
       }
     })
   }
-  isNodeConfigured() {
+  getNodeConfig() {
     return new Observable((observer) => {
       let arg = `hzn node list`
       this.shell(arg, "Successfully list node", "Failed to list node")
@@ -198,7 +210,7 @@ export class Utils {
           try {
             let json = JSON.parse(res)
             console.log(json.configstate.state)
-            observer.next(json.configstate.state === 'configured')
+            observer.next(json)
             observer.complete()
           } catch(e) {
             observer.error(e)
