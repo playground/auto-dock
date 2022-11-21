@@ -139,7 +139,8 @@ export class Utils {
           //console.log(ieamEvent)
           if(!running && ieamEvent.isClearToRun()) {
             running = true
-            switch(ieamEvent.actionType()) {
+            let cloneEvent = Object.assign({}, ieamEvent)
+            switch(cloneEvent.actionType()) {
               case Action.autoRegisterWithPattern:
               case Action.autoRegisterWithPolicy:
               case Action.autoUnregister: 
@@ -147,8 +148,8 @@ export class Utils {
                 .subscribe({
                   next: (config: any) => {
                     console.log('is configured?', config.configstate, typeof config)
-                    arg = `oh deploy ${ieamEvent.action}`
-                    if(ieamEvent.actionType() == Action.autoUnregister) {
+                    arg = `oh deploy ${cloneEvent.action}`
+                    if(cloneEvent.actionType() == Action.autoUnregister) {
                       if(config.configstate.state === 'configured') {
                         arg = '';
                       }
@@ -161,8 +162,8 @@ export class Utils {
                       this.shell(arg)
                       .subscribe({
                         complete: () => {
-                          ieamEvent.lastRun = Date.now()
-                          eventJson.push(Object.assign({},ieamEvent))
+                          cloneEvent.lastRun = Date.now()
+                          eventJson.push(Object.assign({},cloneEvent))
                           json.events = eventJson.slice()
                           jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
                           observer.next('')
