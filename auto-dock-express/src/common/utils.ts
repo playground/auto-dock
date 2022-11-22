@@ -163,7 +163,6 @@ export class Utils {
                           return !equals
                         })
                         if(!equals) {
-                          policyStr = policyStr.replace(/\"/g, '\\"')
                           arg = `oh deploy ${cloneEvent.action} --object=${policyStr}`
 
                           this.shell(arg)
