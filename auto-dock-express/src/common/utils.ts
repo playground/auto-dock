@@ -123,6 +123,13 @@ export class Utils {
       }
     }, ms);
   }
+  isPropsEqual(prop1, prop2) {
+    try {
+      return JSON.stringify(prop1) === JSON.stringify(prop2)
+    } catch(e) {
+      return false;
+    }
+  }
   runTasks() {
     return new Observable((observer) => {
       try {
@@ -143,30 +150,53 @@ export class Utils {
             switch(Action[cloneEvent.action]) {
               case Action.autoUpdateNodePolicy:
                 try {
-                  const policy = cloneEvent.meta && cloneEvent.meta.policy ? JSON.stringify(cloneEvent.meta.policy) : ''
-                  arg = policy.length > 0 ? `oh deploy ${cloneEvent.action} --object=${policy}` : ''
-                } catch(e) {
                   arg = ''
-                }
-                if(arg.length > 0) {
-                  this.shell(arg)
-                  .subscribe({
-                    complete: () => {
-                      cloneEvent.lastRun = Date.now()
-                      eventJson.push(Object.assign({},cloneEvent))
-                      json.events = eventJson.slice()
-                      jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
-                      observer.next('')
-                      observer.complete()  
-                    },
-                    error: (err) => {
-                      console.log('error', err)
-                      observer.error(err)
-                    }
-                  })
-                } else {
-                  observer.next('')
-                  observer.complete()  
+                  let policyStr = cloneEvent.meta && cloneEvent.meta.policy ? JSON.stringify(cloneEvent.meta.policy) : ''
+                  if(policyStr.length > 0) {
+                    this.shell(`oh deploy listPolicy`)
+                    .subscribe({
+                      next: (config: any) => {
+                        let equals = true;
+                        let policy = cloneEvent.meta.policy;
+                        Object.keys(policy).some((key) => {
+                          equals = this.isPropsEqual(policy[key], config[key])
+                          return !equals
+                        })
+                        if(!equals) {
+                          policyStr = policyStr.replace(/\"/g, '\\"')
+                          arg = `oh deploy ${cloneEvent.action} --object=${policyStr}`
+
+                          this.shell(arg)
+                          .subscribe({
+                            complete: () => {
+                              cloneEvent.lastRun = Date.now()
+                              eventJson.push(Object.assign({},cloneEvent))
+                              json.events = eventJson.slice()
+                              jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
+                              observer.next('')
+                              observer.complete()  
+                            },
+                            error: (err) => {
+                              console.log('error', err)
+                              observer.error(err)
+                            }
+                          })          
+                        } else {
+                          observer.next('')
+                          observer.complete()    
+                        }
+                      },
+                      error: (err) => {
+                        console.log('error', err)
+                        observer.error(err)
+                      }
+                    })
+                  } else {
+                    observer.next('')
+                    observer.complete()    
+                  }
+                } catch(e) {
+                  observer.error(e)
                 }
                 break;
               case Action.autoRegisterWithPattern:
