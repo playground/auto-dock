@@ -140,7 +140,35 @@ export class Utils {
           if(!running && ieamEvent.isClearToRun()) {
             running = true
             let cloneEvent = Object.assign({}, ieamEvent)
-            switch(cloneEvent.actionType()) {
+            switch(Action[cloneEvent.action]) {
+              case Action.autoUpdateNodePolicy:
+                try {
+                  const policy = cloneEvent.meta && cloneEvent.meta.policy ? JSON.stringify(cloneEvent.meta.policy) : ''
+                  arg = policy.length > 0 ? `oh deploy ${cloneEvent.action} --object=${policy}` : ''
+                } catch(e) {
+                  arg = ''
+                }
+                if(arg.length > 0) {
+                  this.shell(arg)
+                  .subscribe({
+                    complete: () => {
+                      cloneEvent.lastRun = Date.now()
+                      eventJson.push(Object.assign({},cloneEvent))
+                      json.events = eventJson.slice()
+                      jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
+                      observer.next('')
+                      observer.complete()  
+                    },
+                    error: (err) => {
+                      console.log('error', err)
+                      observer.error(err)
+                    }
+                  })
+                } else {
+                  observer.next('')
+                  observer.complete()  
+                }
+                break;
               case Action.autoRegisterWithPattern:
               case Action.autoRegisterWithPolicy:
               case Action.autoUnregister: 
@@ -149,7 +177,7 @@ export class Utils {
                   next: (config: any) => {
                     console.log('is configured?', config.configstate, typeof config)
                     arg = `oh deploy ${cloneEvent.action}`
-                    if(cloneEvent.actionType() == Action.autoUnregister) {
+                    if(Action[cloneEvent.action] == Action.autoUnregister) {
                       if(config.configstate.state === 'configured') {
                         arg = '';
                       }

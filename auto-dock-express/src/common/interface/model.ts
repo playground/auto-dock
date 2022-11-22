@@ -62,17 +62,27 @@ export class IEAMEvent {
   isClearToRun() {
     return this.isActionAllow() && this.isWithinTimeRange() && this.isTimeToRun()
   }
-  actionType() {
-    return AllowableActions.indexOf(this.action)
+}
+
+export class EnumClass {
+  private enum: any = {};
+  constructor(private eArray: any[] = []) {
+    eArray.map((el, idx) => {
+      this.enum[el] = idx;
+    });
+  }
+
+  getEnum(key: string) {
+    return this.enum[key];
   }
 }
 
 export const AllowableActions = [
-  'autoRegisterWithPolicy', 'autoRegisterWithPattern', 'autoUnregister'
+  'autoRegisterWithPolicy', 'autoRegisterWithPattern', 'autoUnregister', 'autoUpdateNodePolicy'
 ]
 
 export enum Action {
-  autoAddNodePolicy = 0,
+  autoUpdateNodePolicy = 0,
   autoRegisterWithPolicy = 1,
   autoRegisterWithPattern = 2,
   autoUnregister = 3
