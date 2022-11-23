@@ -156,7 +156,7 @@ export class Utils {
                   arg = ''
                   let policyStr = cloneEvent.meta && cloneEvent.meta.policy ? JSON.stringify(cloneEvent.meta.policy) : ''
                   if(policyStr.length > 0) {
-                    this.shell(`oh deploy listPolicy`)
+                    this.getNodePolicy()
                     .subscribe({
                       next: (config: any) => {
                         let equals = true;
@@ -262,6 +262,26 @@ export class Utils {
         observer.error(e)
       }
     })
+  }
+  getNodePolicy() {
+    return new Observable((observer) => {
+      let arg = `hzn policy list`
+      this.shell(arg, "Successfully list policy", "Failed to list policy")
+      .subscribe({
+        next: (res: any) => {
+          console.log(typeof res == 'string')
+          try {
+            let json = JSON.parse(res)
+            observer.next(json)
+            observer.complete()
+          } catch(e) {
+            observer.error(e)
+          }
+        }, error(e) {
+          observer.error(e)
+        }
+      })
+    })  
   }
   getNodeConfig() {
     return new Observable((observer) => {
