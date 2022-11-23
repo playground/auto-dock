@@ -104,8 +104,8 @@ export interface IConstraint {
   constraints: string[] | null;
 }
 export class PolicyClass {
-  properties: IProperty[] | null;
-  constraints: IConstraint;
+  properties: IProperty[] | null = null;
+  constraints: IConstraint = null;
 }
 export class IEAMPolicy {
   properties: IProperty[];
