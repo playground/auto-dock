@@ -95,3 +95,25 @@ export class EventTime {
   meriden: 'PM' | 'AM';
   format: 12 | 24;
 }
+
+export interface IProperty {
+  name: string;
+  value: string;
+}
+export interface IConstraint {
+  constraints: string[] | null;
+}
+export class PolicyClass {
+  properties: IProperty[] | null;
+  constraints: IConstraint;
+}
+export class IEAMPolicy {
+  properties: IProperty[];
+  constraints: IConstraint;
+  deployment: PolicyClass = new PolicyClass();
+  managment: PolicyClass = new PolicyClass();
+
+  constructor(policy: IEAMPolicy) {
+    Object.assign(this, policy)
+  }
+}

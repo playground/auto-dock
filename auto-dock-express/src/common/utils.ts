@@ -3,7 +3,7 @@ import * as https from 'https';
 import jsonfile from 'jsonfile';
 import { Observable } from 'rxjs';
 
-import { Action, IEAMEvent } from './interface/model';
+import { Action, IEAMEvent, IEAMPolicy } from './interface/model';
 import { HznParams } from './params/hzn-params';
 
 const cp = require('child_process'),
@@ -125,7 +125,10 @@ export class Utils {
   }
   isPropsEqual(prop1, prop2) {
     try {
-      return JSON.stringify(prop1) === JSON.stringify(prop2)
+      console.log(JSON.stringify(prop1))
+      console.log(JSON.stringify(prop2))
+      console.log(JSON.stringify(prop1) == JSON.stringify(prop2))
+      return JSON.stringify(prop1) == JSON.stringify(prop2)
     } catch(e) {
       return false;
     }
@@ -158,8 +161,9 @@ export class Utils {
                       next: (config: any) => {
                         let equals = true;
                         let policy = cloneEvent.meta.policy;
+                        let newPolicy = new IEAMPolicy(policy)
                         Object.keys(policy).some((key) => {
-                          equals = this.isPropsEqual(policy[key], config[key])
+                          equals = this.isPropsEqual(newPolicy[key], config[key])
                           return !equals
                         })
                         if(!equals) {

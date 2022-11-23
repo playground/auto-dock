@@ -13,6 +13,22 @@
       "lastRun": 0
     },
     {
+      "action": "autoUpdateNodePolicy",
+      "type": "recurring",
+      "start": "Sat, 19 Nov 2022 14:00:15 GMT",
+      "end": "Sun, 23 Nov 2022 15:35:15 GMT",
+      "meta": {
+        "policy": {
+          "deployment": {
+            "properties": [
+              {"name": "mms-agent", "value": "MMS Agent"},
+              {"name": "worker-safety", "value": "Worker Safety"}
+            ]
+          }
+        }
+      }
+    },
+    {
       "title": "",
       "type": "recurring",
       "id": "",
