@@ -117,3 +117,7 @@ export class IEAMPolicy {
     Object.assign(this, policy)
   }
 }
+
+export const TopLevelDefaultProperties = [
+  'openhorizon.hardwareId', 'openhorizon.operatingSystem', 'openhorizon.containerized', 'openhorizon.cpu', 'openhorizon.arch', 'openhorizon.memory'
+]

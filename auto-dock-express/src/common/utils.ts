@@ -133,6 +133,18 @@ export class Utils {
       return false;
     }
   }
+  isInArray(prop1, prop2) {
+    try {
+      let found = false;
+      prop1.some((p1) => {
+        let ar = prop2.filter((p2) => JSON.stringify(p2) == JSON.stringify(p1))
+        found = ar.length > 0
+        return found
+      })
+    } catch(e) {
+      return false;
+    }
+  }
   runTasks() {
     return new Observable((observer) => {
       try {
@@ -163,7 +175,11 @@ export class Utils {
                         let policy = cloneEvent.meta.policy;
                         let newPolicy = new IEAMPolicy(policy)
                         Object.keys(policy).some((key) => {
-                          equals = this.isPropsEqual(newPolicy[key], config[key])
+                          if(key == 'properties') {
+                            equals = this.isInArray(newPolicy[key], config[key])
+                          } else {
+                            equals = this.isPropsEqual(newPolicy[key], config[key])
+                          }  
                           return !equals
                         })
                         if(!equals) {
