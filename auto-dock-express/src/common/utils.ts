@@ -141,6 +141,7 @@ export class Utils {
         found = ar.length > 0
         return found
       })
+      return found;
     } catch(e) {
       return false;
     }
