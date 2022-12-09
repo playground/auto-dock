@@ -11,7 +11,8 @@ RUN npm install -g hzn-cli
 WORKDIR /oh
 COPY . /oh
 
-RUN npm install
+#RUN npm install
+#RUN chmod 777 /oh/node_modules/content-type/HISTORY.md
 RUN npm run build
 
 EXPOSE 8888
