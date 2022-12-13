@@ -38,6 +38,8 @@ then
   curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz \
   && tar xzvf docker-${DOCKER_VER}.tgz --strip 1 -C /usr/bin docker/docker \
   && rm docker-${DOCKER_VER}.tgz \
+else
+  echo ${ARCH} not supported  
 fi
 
 #curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh -o agent-install.sh && sudo chmod +x agent-install.sh
