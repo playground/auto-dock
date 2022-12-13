@@ -26,10 +26,19 @@ BASEDIR=$(dirname $0)
 echo ${BASEDIR}
 cd ${BASEDIR}
 
-echo curl -fsSLO https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VER}.tgz
-curl -fsSLO https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VER}.tgz \
-&& tar xzvf docker-${DOCKER_VER}.tgz --strip 1 -C /usr/bin docker/docker \
-&& rm docker-${DOCKER_VER}.tgz \
+if [ "${ARCH}" = "aarch64" ]
+then
+  echo curl -fsSLO https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VER}.tgz
+  curl -fsSLO https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VER}.tgz \
+  && tar xzvf docker-${DOCKER_VER}.tgz --strip 1 -C /usr/bin docker/docker \
+  && rm docker-${DOCKER_VER}.tgz \
+elif [ "${ARCH}" = "x86_64" ]
+then
+  echo curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz
+  curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz \
+  && tar xzvf docker-${DOCKER_VER}.tgz --strip 1 -C /usr/bin docker/docker \
+  && rm docker-${DOCKER_VER}.tgz \
+fi
 
 #curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh -o agent-install.sh && sudo chmod +x agent-install.sh
 echo ${version}
