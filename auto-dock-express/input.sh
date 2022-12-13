@@ -31,13 +31,13 @@ then
   echo curl -fsSLO https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VER}.tgz
   curl -fsSLO https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VER}.tgz \
   && tar xzvf docker-${DOCKER_VER}.tgz --strip 1 -C /usr/bin docker/docker \
-  && rm docker-${DOCKER_VER}.tgz \
+  && rm docker-${DOCKER_VER}.tgz
 elif [ "${ARCH}" = "x86_64" ]
 then
   echo curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz
   curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz \
   && tar xzvf docker-${DOCKER_VER}.tgz --strip 1 -C /usr/bin docker/docker \
-  && rm docker-${DOCKER_VER}.tgz \
+  && rm docker-${DOCKER_VER}.tgz
 else
   echo ${ARCH} not supported  
 fi
