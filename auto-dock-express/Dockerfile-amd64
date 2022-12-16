@@ -3,6 +3,11 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN apt-get update -y && apt-get install -y apt-utils vim curl sudo
 
+ARG DOCKER_VER=19.03.8
+RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz \
+  && tar xzvf docker-${DOCKER_VER}.tgz --strip 1 -C /usr/bin docker/docker \
+  && rm docker-${DOCKER_VER}.tgz
+
 RUN curl -sL https://deb.nodesource.com/setup_16.x  | bash -
 RUN apt-get -y install nodejs
 RUN npm install -g npm
