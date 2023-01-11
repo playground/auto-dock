@@ -172,18 +172,18 @@ export class Utils {
                     this.getNodePolicy()
                     .subscribe({
                       next: (config: any) => {
-                        let equals = true;
+                        let equals = [];
                         let policy = cloneEvent.meta.policy;
                         let newPolicy = new IEAMPolicy(policy)
-                        Object.keys(policy).some((key) => {
+                        Object.keys(policy).forEach((key) => {
                           if(key == 'properties') {
-                            equals = this.isInArray(newPolicy[key], config[key])
+                            equals.push(this.isInArray(newPolicy[key], config[key]))
                           } else {
-                            equals = this.isPropsEqual(newPolicy[key], config[key])
+                            equals.push(this.isPropsEqual(newPolicy[key], config[key]))
                           }  
-                          return !equals
                         })
-                        if(!equals) {
+                        let res = equals.filter(eq => !eq);
+                        if(res.length > 0) {
                           policyStr = policyStr.replace(/\"/g, '\\"')
                           arg = `oh deploy ${cloneEvent.action} --object="${policyStr}"`
 
@@ -269,7 +269,7 @@ export class Utils {
             eventJson.push(Object.assign({},ieamEvent))
           }
         });
-        console.log(eventJson)
+        //console.log(eventJson)
         if(!running) {
           observer.next('')
           observer.complete()  
