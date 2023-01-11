@@ -87,7 +87,7 @@ export class Utils {
   setInterval(ms) {
     this.timer = setInterval(async () => {
       let mmsFiles = this.checkMMS(); 
-      console.log('checking', mmsFiles)
+      //console.log('checking', mmsFiles)
       if(mmsFiles && mmsFiles.length > 0) {
         clearInterval(this.timer);
         mmsFiles.forEach(file => {
@@ -133,7 +133,7 @@ export class Utils {
       })
       console.log(JSON.stringify(prop1));
       console.log(JSON.stringify(prop3));
-      console.log(JSON.stringify(prop1) == JSON.stringify(prop3));
+      //console.log(JSON.stringify(prop1) == JSON.stringify(prop3));
       return JSON.stringify(prop1) == JSON.stringify(prop3);
     } catch(e) {
       return false;
@@ -332,24 +332,22 @@ export class Utils {
   shell(arg: string, success='command executed successfully', error='command failed', prnStdout=true, options={maxBuffer: 1024 * 2000}) {
     return new Observable((observer) => {
       console.log(arg);
-      (async() => {
-        const execSync = require('child_process').execSync;
-        try {
-          if(!prnStdout) {
-            options = Object.assign(options, {stdio: 'pipe'})
-          }
-          let stdout = execSync(arg , options);
+      if(!prnStdout) {
+        options = Object.assign(options, {stdio: 'pipe', encoding: 'utf8'})
+      }
+      exec(arg, options, (err: any, stdout: any, stderr: any) => {
+        if(!err) {
           if(prnStdout) {
             console.log(stdout);
           }
           console.log(success);
           observer.next(stdout);
           observer.complete();
-        } catch (e) {
-          console.log(`${error}: ${e.stderr}`);
-          observer.error(e.stderr);
-        }        
-      })()
+        } else {
+          console.log(`${error}: ${err}`);
+          observer.error(err);
+        }
+      })  
     });
   }
   shell2(arg: string, success='command executed successfully', error='command failed', prnStdout=true, options={maxBuffer: 1024 * 2000}) {
