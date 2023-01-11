@@ -125,10 +125,16 @@ export class Utils {
   }
   isPropsEqual(prop1, prop2) {
     try {
-      console.log(JSON.stringify(prop1))
-      console.log(JSON.stringify(prop2))
-      console.log(JSON.stringify(prop1) == JSON.stringify(prop2))
-      return JSON.stringify(prop1) == JSON.stringify(prop2)
+      let prop3 = {};   
+      Object.keys(prop2).forEach((key) => { 
+          if(prop2[key] !== null) {
+             prop3[key] = prop2[key];
+          }
+      })
+      console.log(JSON.stringify(prop1));
+      console.log(JSON.stringify(prop3));
+      console.log(JSON.stringify(prop1) == JSON.stringify(prop3));
+      return JSON.stringify(prop1) == JSON.stringify(prop3);
     } catch(e) {
       return false;
     }
@@ -149,7 +155,6 @@ export class Utils {
   runTasks() {
     return new Observable((observer) => {
       try {
-        console.log('run tasks')
         let eventJson = [];
         let json = jsonfile.readFileSync(`${this.assets}/config.json`);
         let ieamEvent: IEAMEvent;
@@ -158,9 +163,10 @@ export class Utils {
         json.events.forEach((event: IEAMEvent, idx) => {
           ieamEvent = new IEAMEvent(event)
           const date = new Date()
-          console.log(ieamEvent.isWithinDateRange(), ieamEvent.isActionAllow(), ieamEvent.isClearToRun(), date.toUTCString())
+          //console.log(ieamEvent.isWithinDateRange(), ieamEvent.isActionAllow(), ieamEvent.isClearToRun(), date.toUTCString())
           //console.log(ieamEvent)
           if(!running && ieamEvent.isClearToRun()) {
+            console.log('run tasks')
             running = true
             let cloneEvent = Object.assign({}, ieamEvent)
             switch(Action[cloneEvent.action]) {
