@@ -125,10 +125,16 @@ export class Utils {
   }
   isPropsEqual(prop1, prop2) {
     try {
-      console.log(JSON.stringify(prop1))
-      console.log(JSON.stringify(prop2))
-      console.log(JSON.stringify(prop1) == JSON.stringify(prop2))
-      return JSON.stringify(prop1) == JSON.stringify(prop2)
+      let prop3 = {};   
+      Object.keys(prop2).forEach((key) => { 
+          if(prop2[key] !== null) {
+             prop3[key] = prop2[key];
+          }
+      })
+      console.log(JSON.stringify(prop1));
+      console.log(JSON.stringify(prop3));
+      console.log(JSON.stringify(prop1) == JSON.stringify(prop3));
+      return JSON.stringify(prop1) == JSON.stringify(prop3);
     } catch(e) {
       return false;
     }
@@ -149,7 +155,6 @@ export class Utils {
   runTasks() {
     return new Observable((observer) => {
       try {
-        console.log('run tasks')
         let eventJson = [];
         let json = jsonfile.readFileSync(`${this.assets}/config.json`);
         let ieamEvent: IEAMEvent;
@@ -158,9 +163,10 @@ export class Utils {
         json.events.forEach((event: IEAMEvent, idx) => {
           ieamEvent = new IEAMEvent(event)
           const date = new Date()
-          console.log(ieamEvent.isWithinDateRange(), ieamEvent.isActionAllow(), ieamEvent.isClearToRun(), date.toUTCString())
+          //console.log(ieamEvent.isWithinDateRange(), ieamEvent.isActionAllow(), ieamEvent.isClearToRun(), date.toUTCString())
           //console.log(ieamEvent)
           if(!running && ieamEvent.isClearToRun()) {
+            console.log('run tasks')
             running = true
             let cloneEvent = Object.assign({}, ieamEvent)
             switch(Action[cloneEvent.action]) {
@@ -172,18 +178,18 @@ export class Utils {
                     this.getNodePolicy()
                     .subscribe({
                       next: (config: any) => {
-                        let equals = true;
+                        let equals = [];
                         let policy = cloneEvent.meta.policy;
                         let newPolicy = new IEAMPolicy(policy)
-                        Object.keys(policy).some((key) => {
+                        Object.keys(policy).forEach((key) => {
                           if(key == 'properties') {
-                            equals = this.isInArray(newPolicy[key], config[key])
+                            equals.push(this.isInArray(newPolicy[key], config[key]))
                           } else {
-                            equals = this.isPropsEqual(newPolicy[key], config[key])
+                            equals.push(this.isPropsEqual(newPolicy[key], config[key]))
                           }  
-                          return !equals
                         })
-                        if(!equals) {
+                        let res = equals.filter(eq => !eq);
+                        if(res.length > 0) {
                           policyStr = policyStr.replace(/\"/g, '\\"')
                           arg = `oh deploy ${cloneEvent.action} --object="${policyStr}"`
 
@@ -203,6 +209,7 @@ export class Utils {
                             }
                           })          
                         } else {
+                          console.log('Update is not needed!')
                           observer.next('')
                           observer.complete()    
                         }
@@ -213,6 +220,7 @@ export class Utils {
                       }
                     })
                   } else {
+                    console.log('Update is not needed!')
                     observer.next('')
                     observer.complete()    
                   }
@@ -269,7 +277,7 @@ export class Utils {
             eventJson.push(Object.assign({},ieamEvent))
           }
         });
-        console.log(eventJson)
+        //console.log(eventJson)
         if(!running) {
           observer.next('')
           observer.complete()  
@@ -286,7 +294,7 @@ export class Utils {
       this.shell(arg, "Successfully list policy", "Failed to list policy")
       .subscribe({
         next: (res: any) => {
-          console.log(typeof res == 'string')
+          //console.log(typeof res == 'string')
           try {
             let json = JSON.parse(res)
             observer.next(json)
@@ -322,6 +330,29 @@ export class Utils {
     })  
   }
   shell(arg: string, success='command executed successfully', error='command failed', prnStdout=true, options={maxBuffer: 1024 * 2000}) {
+    return new Observable((observer) => {
+      console.log(arg);
+      (async() => {
+        const execSync = require('child_process').execSync;
+        try {
+          if(!prnStdout) {
+            options = Object.assign(options, {stdio: 'pipe'})
+          }
+          let stdout = execSync(arg , options);
+          if(prnStdout) {
+            console.log(stdout);
+          }
+          console.log(success);
+          observer.next(stdout);
+          observer.complete();
+        } catch (e) {
+          console.log(`${error}: ${e.stderr}`);
+          observer.error(e.stderr);
+        }        
+      })()
+    });
+  }
+  shell2(arg: string, success='command executed successfully', error='command failed', prnStdout=true, options={maxBuffer: 1024 * 2000}) {
     return new Observable((observer) => {
       console.log(arg);
       let child = exec(arg, options, (err: any, stdout: any, stderr: any) => {
