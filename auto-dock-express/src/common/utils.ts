@@ -209,6 +209,7 @@ export class Utils {
                             }
                           })          
                         } else {
+                          console.log('Update is not needed!')
                           observer.next('')
                           observer.complete()    
                         }
@@ -219,6 +220,7 @@ export class Utils {
                       }
                     })
                   } else {
+                    console.log('Update is not needed!')
                     observer.next('')
                     observer.complete()    
                   }
@@ -292,7 +294,7 @@ export class Utils {
       this.shell(arg, "Successfully list policy", "Failed to list policy")
       .subscribe({
         next: (res: any) => {
-          console.log(typeof res == 'string')
+          //console.log(typeof res == 'string')
           try {
             let json = JSON.parse(res)
             observer.next(json)
@@ -328,6 +330,29 @@ export class Utils {
     })  
   }
   shell(arg: string, success='command executed successfully', error='command failed', prnStdout=true, options={maxBuffer: 1024 * 2000}) {
+    return new Observable((observer) => {
+      console.log(arg);
+      (async() => {
+        const execSync = require('child_process').execSync;
+        try {
+          if(!prnStdout) {
+            options = Object.assign(options, {stdio: 'pipe'})
+          }
+          let stdout = execSync(arg , options);
+          if(prnStdout) {
+            console.log(stdout);
+          }
+          console.log(success);
+          observer.next(stdout);
+          observer.complete();
+        } catch (e) {
+          console.log(`${error}: ${e.stderr}`);
+          observer.error(e.stderr);
+        }        
+      })()
+    });
+  }
+  shell2(arg: string, success='command executed successfully', error='command failed', prnStdout=true, options={maxBuffer: 1024 * 2000}) {
     return new Observable((observer) => {
       console.log(arg);
       let child = exec(arg, options, (err: any, stdout: any, stderr: any) => {
