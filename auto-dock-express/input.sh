@@ -16,6 +16,11 @@ else
  FILE="horizon-agent-linux-deb-amd64.tar.gz"
 fi
 
+if [[ -n "${zipfile// /}" ]]
+then 
+  FILE=${zipfile}
+fi
+
 if [ "${port}" = "" ]
 then
   port=8888

@@ -38,13 +38,10 @@ export class IEAMEvent {
   }
   isWithinTimeRange() {
     if(this.isWithinDateRange()) {
-      const date = new Date()
-      const start = new Date(this.start)
-      const end = new Date(this.end)
-      const time = date.getHours()*3600 + date.getMinutes()*60 + date.getSeconds()
-      const stime = start.getHours()*3600 + start.getMinutes()*60 + start.getSeconds() 
-      const etime = end.getHours()*3600 + end.getMinutes()*60 + end.getSeconds() 
-      return time >= stime && time <= etime
+      const now = Date.now();
+      const start = new Date(this.start).getTime();
+      const end = new Date(this.end).getTime();
+      return now >= start && now <= end
     } else {
       return false
     }
