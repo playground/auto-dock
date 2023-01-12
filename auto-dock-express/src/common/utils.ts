@@ -152,6 +152,16 @@ export class Utils {
       return false;
     }
   }
+  updateConfigJson(cloneEvent: IEAMEvent, eventJson: IEAMEvent[], json: any) {
+    return new Observable((observer) => {
+      cloneEvent.lastRun = {timestamp: Date.now(), succeeded: true}
+      eventJson.push(Object.assign({},cloneEvent))
+      json.events = eventJson.slice()
+      jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
+      observer.next('')
+      observer.complete()
+    })
+  }
   runTasks() {
     return new Observable((observer) => {
       try {
@@ -174,7 +184,7 @@ export class Utils {
                 try {
                   arg = ''
                   let policyStr = cloneEvent.meta && cloneEvent.meta.policy ? JSON.stringify(cloneEvent.meta.policy) : ''
-                  if(policyStr.length > 0) {
+                  if(policyStr.length > 0 && !cloneEvent.lastRun.succeeded) {
                     this.getNodePolicy(false)
                     .subscribe({
                       next: (config: any) => {
@@ -196,12 +206,11 @@ export class Utils {
                           this.shell(arg)
                           .subscribe({
                             complete: () => {
-                              cloneEvent.lastRun = Date.now()
-                              eventJson.push(Object.assign({},cloneEvent))
-                              json.events = eventJson.slice()
-                              jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
-                              observer.next('')
-                              observer.complete()  
+                              this.updateConfigJson(cloneEvent, eventJson, json)
+                              .subscribe(() => {
+                                observer.next('')
+                                observer.complete()
+                              })
                             },
                             error: (err) => {
                               console.log('error', err)
@@ -210,8 +219,11 @@ export class Utils {
                           })          
                         } else {
                           console.log('Update is not needed!')
-                          observer.next('')
-                          observer.complete()    
+                          this.updateConfigJson(cloneEvent, eventJson, json)
+                          .subscribe(() => {
+                            observer.next('')
+                            observer.complete()
+                          })
                         }
                       },
                       error: (err) => {
@@ -221,8 +233,11 @@ export class Utils {
                     })
                   } else {
                     console.log('Update is not needed!')
-                    observer.next('')
-                    observer.complete()    
+                    this.updateConfigJson(cloneEvent, eventJson, json)
+                    .subscribe(() => {
+                      observer.next('')
+                      observer.complete()
+                    })
                   }
                 } catch(e) {
                   observer.error(e)
@@ -249,7 +264,7 @@ export class Utils {
                       this.shell(arg)
                       .subscribe({
                         complete: () => {
-                          cloneEvent.lastRun = Date.now()
+                          cloneEvent.lastRun = {timestamp: Date.now(), succeeded: true}
                           eventJson.push(Object.assign({},cloneEvent))
                           json.events = eventJson.slice()
                           jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});

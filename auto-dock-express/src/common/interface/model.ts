@@ -2,6 +2,15 @@ export interface IPayload {
   hello: string;
   events: IEAMEvent[];
 }
+export class LastRun {
+  timestamp: number;
+  succeeded: boolean;
+
+  constructor(timestamp = 0, succeeded = false) {
+    this.succeeded =succeeded;
+    this.timestamp = timestamp;
+  }
+}
 export class IEAMEvent {
   title: string = '';
   type: string = '';
@@ -11,9 +20,10 @@ export class IEAMEvent {
   start: string = '';
   end: string = '';
   frequency: number = 60000;
-  lastRun: number = 0;
+  lastRun: LastRun;
 
   constructor(event: IEAMEvent) {
+    this.lastRun = new LastRun();
     Object.assign(this, event)
   }
 
@@ -48,7 +58,7 @@ export class IEAMEvent {
   }
   isTimeToRun() {
     if(this.isWithinDateRange()) {
-      return Date.now() - this.lastRun > this.frequency
+      return Date.now() - this.lastRun.timestamp > this.frequency
     } else {
       return false
     }
