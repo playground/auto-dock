@@ -99,7 +99,6 @@ export class Utils {
       }
       //console.log('checking', mmsFiles)
       if(mmsFiles && mmsFiles.length > 0) {
-        clearInterval(this.timer);
         mmsFiles.forEach(file => {
           // For now only handle json files
           if(file.indexOf('.json') > 0) {
@@ -110,28 +109,33 @@ export class Utils {
               },
               complete: () => {
                 console.log('complete')
-                this.resetTimer()
+                this.doRun();
               },
               error: (err) => {
                 console.log('error', err)
                 this.resetTimer()
               }
             })
+          } else {
+            this.doRun();
           }
         });
       } else {
-        clearInterval(this.timer);
-        this.runTasks()
-        .subscribe({
-          complete: () => {
-            this.resetTimer()
-          },
-          error: (err) => {
-            this.resetTimer()
-          }
-        })
+        this.doRun();
       }
     }, ms);
+  }
+  doRun() {
+    clearInterval(this.timer);
+    this.runTasks()
+    .subscribe({
+      complete: () => {
+        this.resetTimer()
+      },
+      error: (err) => {
+        this.resetTimer()
+      }
+    })
   }
   isPropsEqual(prop1, prop2) {
     try {
