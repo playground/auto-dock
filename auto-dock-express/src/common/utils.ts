@@ -17,6 +17,8 @@ export class Utils {
   sharedPath = '';
   intervalMS = 10000;
   timer: NodeJS.Timer = null;
+  timestamp = Date.now();
+  logTime = Date.now();
 
   constructor() {
     this.init()
@@ -26,6 +28,7 @@ export class Utils {
       mkdirSync(this.localPath);
     }
     this.resetTimer()
+    console.log(`check per ${this.intervalMS/1000} sec, console.log per 10 minutes, last checked: ${new Date().toLocaleString()}`) 
   }
 
   httpGet(url) {
@@ -86,7 +89,14 @@ export class Utils {
   }
   setInterval(ms) {
     this.timer = setInterval(async () => {
-      let mmsFiles = this.checkMMS(); 
+      let mmsFiles = this.checkMMS();
+      if(Date.now() - this.timestamp > 600000) {
+        this.timestamp = Date.now();
+        console.log(`last checked: ${new Date().toLocaleString()}`) 
+      } else if(Date.now() - this.logTime > 86400000) {
+        console.clear();
+        this.logTime = Date.now();
+      }
       //console.log('checking', mmsFiles)
       if(mmsFiles && mmsFiles.length > 0) {
         clearInterval(this.timer);
