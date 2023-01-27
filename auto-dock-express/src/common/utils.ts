@@ -17,6 +17,8 @@ export class Utils {
   sharedPath = '';
   intervalMS = 10000;
   timer: NodeJS.Timer = null;
+  timestamp = Date.now();
+  logTime = Date.now();
 
   constructor() {
     this.init()
@@ -26,6 +28,7 @@ export class Utils {
       mkdirSync(this.localPath);
     }
     this.resetTimer()
+    console.log(`check per ${this.intervalMS/1000} sec, console.log per 10 minutes, last checked: ${new Date().toLocaleString()}`) 
   }
 
   httpGet(url) {
@@ -86,10 +89,16 @@ export class Utils {
   }
   setInterval(ms) {
     this.timer = setInterval(async () => {
-      let mmsFiles = this.checkMMS(); 
+      let mmsFiles = this.checkMMS();
+      if(Date.now() - this.timestamp > 600000) {
+        this.timestamp = Date.now();
+        console.log(`last checked: ${new Date().toLocaleString()}`) 
+      } else if(Date.now() - this.logTime > 86400000) {
+        console.clear();
+        this.logTime = Date.now();
+      }
       //console.log('checking', mmsFiles)
       if(mmsFiles && mmsFiles.length > 0) {
-        clearInterval(this.timer);
         mmsFiles.forEach(file => {
           // For now only handle json files
           if(file.indexOf('.json') > 0) {
@@ -100,28 +109,33 @@ export class Utils {
               },
               complete: () => {
                 console.log('complete')
-                this.resetTimer()
+                this.doRun();
               },
               error: (err) => {
                 console.log('error', err)
                 this.resetTimer()
               }
             })
+          } else {
+            this.doRun();
           }
         });
       } else {
-        clearInterval(this.timer);
-        this.runTasks()
-        .subscribe({
-          complete: () => {
-            this.resetTimer()
-          },
-          error: (err) => {
-            this.resetTimer()
-          }
-        })
+        this.doRun();
       }
     }, ms);
+  }
+  doRun() {
+    clearInterval(this.timer);
+    this.runTasks()
+    .subscribe({
+      complete: () => {
+        this.resetTimer()
+      },
+      error: (err) => {
+        this.resetTimer()
+      }
+    })
   }
   isPropsEqual(prop1, prop2) {
     try {
@@ -152,6 +166,16 @@ export class Utils {
       return false;
     }
   }
+  updateConfigJson(cloneEvent: IEAMEvent, eventJson: IEAMEvent[], json: any) {
+    return new Observable((observer) => {
+      cloneEvent.lastRun = {timestamp: Date.now(), succeeded: true}
+      eventJson.push(Object.assign({},cloneEvent))
+      json.events = eventJson.slice()
+      jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
+      observer.next('')
+      observer.complete()
+    })
+  }
   runTasks() {
     return new Observable((observer) => {
       try {
@@ -174,7 +198,7 @@ export class Utils {
                 try {
                   arg = ''
                   let policyStr = cloneEvent.meta && cloneEvent.meta.policy ? JSON.stringify(cloneEvent.meta.policy) : ''
-                  if(policyStr.length > 0) {
+                  if(policyStr.length > 0 && !cloneEvent.lastRun.succeeded) {
                     this.getNodePolicy(false)
                     .subscribe({
                       next: (config: any) => {
@@ -196,12 +220,11 @@ export class Utils {
                           this.shell(arg)
                           .subscribe({
                             complete: () => {
-                              cloneEvent.lastRun = Date.now()
-                              eventJson.push(Object.assign({},cloneEvent))
-                              json.events = eventJson.slice()
-                              jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
-                              observer.next('')
-                              observer.complete()  
+                              this.updateConfigJson(cloneEvent, eventJson, json)
+                              .subscribe(() => {
+                                observer.next('')
+                                observer.complete()
+                              })
                             },
                             error: (err) => {
                               console.log('error', err)
@@ -210,8 +233,11 @@ export class Utils {
                           })          
                         } else {
                           console.log('Update is not needed!')
-                          observer.next('')
-                          observer.complete()    
+                          this.updateConfigJson(cloneEvent, eventJson, json)
+                          .subscribe(() => {
+                            observer.next('')
+                            observer.complete()
+                          })
                         }
                       },
                       error: (err) => {
@@ -221,8 +247,11 @@ export class Utils {
                     })
                   } else {
                     console.log('Update is not needed!')
-                    observer.next('')
-                    observer.complete()    
+                    this.updateConfigJson(cloneEvent, eventJson, json)
+                    .subscribe(() => {
+                      observer.next('')
+                      observer.complete()
+                    })
                   }
                 } catch(e) {
                   observer.error(e)
@@ -249,7 +278,7 @@ export class Utils {
                       this.shell(arg)
                       .subscribe({
                         complete: () => {
-                          cloneEvent.lastRun = Date.now()
+                          cloneEvent.lastRun = {timestamp: Date.now(), succeeded: true}
                           eventJson.push(Object.assign({},cloneEvent))
                           json.events = eventJson.slice()
                           jsonfile.writeFileSync(`${this.assets}/config.json`, json, {spaces: 2});
