@@ -26,11 +26,19 @@ then
   port=8888
 fi
 
+if [ "${HORIZON_URL}" = "" ]
+then
+  export HORIZON_URL="http://localhost:8081"
+else
+  export HORIZON_URL="${HORIZON_URL}"
+fi
+
 DOCKER_VER=19.03.8
 BASEDIR=$(dirname $0)
 echo ${BASEDIR}
 cd ${BASEDIR}
 
+# NOTE:  TODO:  for now comment out ./agent-install.sh: line 2023: systemctl: command not found
 #curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh -o agent-install.sh && sudo chmod +x agent-install.sh
 echo ${version}
 echo ${css}
@@ -49,8 +57,6 @@ else
   tar -zxvf ${FILE}
   ./agent-install.sh -C
 fi
-
-export HORIZON_URL="http://localhost:8081"
 
 if [ "${HZN_CONFIG_FILE}" != "" ]
 then
