@@ -32,6 +32,7 @@ AutoDock is a containerized service to enable hzn cli to run in a container and 
   - Then select 1) to provide path to your configuration json file then press 2) to confirm
 
 - An example of the json configuration template
+  Note:  HZN_CSS=true for HTTPS
 
 ```
 {
@@ -47,6 +48,7 @@ AutoDock is a containerized service to enable hzn cli to run in a container and 
     "HZN_SDO_SVC_URL": "http://9.30.255.148:9008/api",
     "HZN_AGENT_PORT": "8510",
     "HZN_CSS": false,
+    "CONFIG_CERT_PATH": "/home/ieam/agent-install.crt",
     "ANAX": "https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/agent-install.sh"
   },
   "service": {
@@ -79,7 +81,7 @@ AutoDock is a containerized service to enable hzn cli to run in a container and 
       "properties": [
         {
           "name": "openhorizon.allowPrivileged",
-	  "value": true
+	        "value": true
         }
       ],
       "deployment": {
@@ -90,11 +92,22 @@ AutoDock is a containerized service to enable hzn cli to run in a container and 
       }
     }
   },
-  "test": false,
+  "test": true,
   "anaxInContainer": "docker run -d -t --restart always --name horizon1 --privileged -p 127.0.0.1:8081:8510 -e DOCKER_NAME=horizon1 -e HZN_VAR_RUN_BASE=/var/tmp/horizon/horizon1 -v /var/run/docker.sock:/var/run/docker.sock -v /var/horizon:/etc/default/horizon:ro -v /var/agent-install.crt:/var/agent-install.crt -v horizon1_var:/var/horizon/ -v horizon1_etc:/etc/horizon/ -v /var/tmp/horizon/horizon1:/var/tmp/horizon/horizon1 openhorizon/amd64_anax:2.30.0-1291",
   "cliInContainer": "docker run -d -it --restart always --name auto-dock --privileged --network=\"host\" -v /var/lib/docker/volumes/mms_shared_volume/_data:/mms-shared/ -p 127.0.0.1:8888:8888 -v /var/run/docker.sock:/var/run/docker.sock -v /var/agent-install.crt:/var/agent-install.crt -v /home/ieam/fyre.148.ieam.json:/var/fyre.148.ieam.json -e HORIZON_URL=http://localhost:8081 -e HZN_ORG_ID=${HZN_ORG_ID} -e HZN_EXCHANGE_USER_AUTH=${HZN_EXCHANGE_USER_AUTH} -e HZN_FSS_CSSURL=${HZN_FSS_CSSURL} -e HZN_EXCHANGE_URL=${HZN_EXCHANGE_URL} -e HZN_CONFIG_FILE=/var/fyre.148.ieam.json -e version=v2.30.0-1291 -e css=${HZN_CSS} playbox21/auto-dock-express_amd64:1.0.3"
 }
 
+```
+
+- horizon file should have the following env vars
+```
+HZN_EXCHANGE_URL=
+HZN_FSS_CSSURL=
+HZN_DEVICE_ID=
+HZN_NODE_ID=
+HZN_AGBOT_URL=
+HZN_SDO_SVC_URL=
+HZN_MGMT_HUB_CERT_PATH=
 ```
 
 - With the above configuration, the edge node will be setup with horizon1 and auto-dock containers and agent is registered with the policy. The services with the constraints that match this policy properties will get loaded. In this case, mms-agent and homehub-express services will be loaded as described in the configuration.
