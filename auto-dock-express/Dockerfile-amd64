@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-RUN apt-get update -y && apt-get install -y apt-utils vim curl sudo
+RUN apt-get update -y && apt-get install -y apt-utils jq vim curl sudo
 
 ARG DOCKER_VER=19.03.8
 RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz \

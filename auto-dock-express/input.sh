@@ -44,7 +44,7 @@ echo ${version}
 echo ${css}
 if [ "${css}" = "true" ]
 then
-  ./agent-install.sh -i css: -C
+  ./agent-install.sh -i css: -c css: -k css: -C 
 elif [ "${version}" = "" ]
 then 
   echo curl -sSL https://github.com/open-horizon/anax/releases/latest/download/${FILE} -o ${FILE}
