@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN apt-get update -y && apt-get install -y apt-utils vim curl openssh-server sudo
@@ -19,7 +19,7 @@ CMD ["/usr/sbin/sshd","-D"]
 
 WORKDIR /oh
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x  | bash -
+RUN curl -sL https://deb.nodesource.com/setup_20.x  | bash -
 RUN apt-get -y install nodejs
 RUN npm install -g npm
 RUN npm install -g hzn-cli
