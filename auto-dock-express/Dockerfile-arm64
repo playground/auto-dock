@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN apt-get update -y && apt-get install -y apt-utils jq vim curl sudo
@@ -7,7 +7,7 @@ RUN curl -fsSLO https://download.docker.com/linux/static/stable/aarch64/docker-$
   && tar xzvf docker-${DOCKER_VER}.tgz --strip 1 -C /usr/bin docker/docker \
   && rm docker-${DOCKER_VER}.tgz
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x  | bash -
+RUN curl -sL https://deb.nodesource.com/setup_20.x  | bash -
 RUN apt-get -y install nodejs
 RUN npm install -g npm
 RUN npm install -g hzn-cli
