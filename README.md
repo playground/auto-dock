@@ -31,7 +31,7 @@ AutoDock is a containerized service to enable hzn cli to run in a container and 
   - As shown above, select 5) Run-In-Containers then press 7) to confirm
   - Then select 1) to provide path to your configuration json file then press 2) to confirm
 
-- An example of the json configuration template
+- An example of the fyre.216.dock.json configuration template
   Note:  HZN_CSS=true for HTTPS
 
 ```
@@ -93,8 +93,8 @@ AutoDock is a containerized service to enable hzn cli to run in a container and 
     }
   },
   "test": true,
-  "anaxInContainer": "docker run -d -t --restart always --name horizon1 --privileged -p 127.0.0.1:8081:8510 -e DOCKER_NAME=horizon1 -e HZN_VAR_RUN_BASE=/var/tmp/horizon/horizon1 -v /var/run/docker.sock:/var/run/docker.sock -v /var/horizon:/etc/default/horizon:ro -v /var/agent-install.crt:/var/agent-install.crt -v horizon1_var:/var/horizon/ -v horizon1_etc:/etc/horizon/ -v /var/tmp/horizon/horizon1:/var/tmp/horizon/horizon1 openhorizon/amd64_anax:2.30.0-1291",
-  "cliInContainer": "docker run -d -it --restart always --name auto-dock --privileged --network=\"host\" -v /var/lib/docker/volumes/mms_shared_volume/_data:/mms-shared/ -p 127.0.0.1:8888:8888 -v /var/run/docker.sock:/var/run/docker.sock -v /var/agent-install.crt:/var/agent-install.crt -v /home/ieam/fyre.148.ieam.json:/var/fyre.148.ieam.json -e HORIZON_URL=http://localhost:8081 -e HZN_ORG_ID=${HZN_ORG_ID} -e HZN_EXCHANGE_USER_AUTH=${HZN_EXCHANGE_USER_AUTH} -e HZN_FSS_CSSURL=${HZN_FSS_CSSURL} -e HZN_EXCHANGE_URL=${HZN_EXCHANGE_URL} -e HZN_CONFIG_FILE=/var/fyre.148.ieam.json -e version=v2.30.0-1291 -e css=${HZN_CSS} playbox21/auto-dock-express_amd64:1.0.3"
+  "anaxInContainer": "docker run -d -t --restart always --name horizon1 --privileged -p 127.0.0.1:8081:8510 -e DOCKER_NAME=horizon1 -e HZN_VAR_RUN_BASE=/var/tmp/horizon/horizon1 -v /var/run/docker.sock:/var/run/docker.sock -v /var/horizon:/etc/default/horizon:ro -v /var/agent-install.crt:/var/agent-install.crt -v horizon1_var:/var/horizon/ -v horizon1_etc:/etc/horizon/ -v /var/tmp/horizon/horizon1:/var/tmp/horizon/horizon1 openhorizon/amd64_anax:2.30.0-1194",
+  "cliInContainer": "docker run -d -it --restart always --name auto-dock --privileged --network=\"host\" -v /var/lib/docker/volumes/mms_shared_volume/_data:/mms-shared/ -v /var/run/docker.sock:/var/run/docker.sock -v /var/agent-install.crt:/var/agent-install.crt -v /home/ieam/fyre.216.dock.json:/var/fyre.216.dock.json -e HORIZON_URL=http://localhost:8081 -e HZN_ORG_ID=${HZN_ORG_ID} -e HZN_EXCHANGE_USER_AUTH=${HZN_EXCHANGE_USER_AUTH} -e HZN_FSS_CSSURL=${HZN_FSS_CSSURL} -e HZN_EXCHANGE_URL=${HZN_EXCHANGE_URL} -e HZN_CONFIG_FILE=/var/fyre.216.dock.json -e css=${HZN_CSS} -e version=v2.30.0-1194 playbox21/auto-dock-express_amd64:1.0.5"
 }
 
 ```
