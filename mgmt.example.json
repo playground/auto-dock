@@ -1,0 +1,60 @@
+{
+  "org": {
+    "HZN_ORG_ID": "myhub",
+    "HZN_TRANSPORT": "http",
+    "OH_ANAX_RELEASES": "https://github.com/open-horizon/anax/releases/download/v2.30.0-952",
+    "DEPLOY_MGMT_HUB_SCRIPT": "./deploy-mgmt-hub-works.sh",
+    "MONGO_IMAGE_TAG": "5.0.9"
+  },
+  "metaVars": {
+    "HC_DOCKER_IMAGE": "openhorizon/arm64_anax",
+    "HC_DOCKER_TAG": "2.30.0-934"
+  },
+  "service": {
+    "SERVICE_NAME": "auto-dock-express",
+    "SERVICE_CONTAINER_NAME": "auto-dock-express",
+    "SERVICE_VERSION": "1.0.5",
+    "SERVICE_VERSION_RANGE_UPPER": "1.0.5",
+    "SERVICE_VERSION_RANGE_LOWER": "1.0.5",
+    "SERVICE_CONTAINER_CREDS": "",
+    "VOLUME_MOUNT": "/mms-shared",
+    "MMS_SHARED_VOLUME": "mms_shared_volume",
+    "MMS_OBJECT_TYPE": "mms_agent_config",
+    "MMS_OBJECT_ID": "mms_agent_config_json",
+    "MMS_OBJECT_FILE": "config/config.json",
+    "MMS_CONTAINER_CREDS": "",
+    "MMS_CONTAINER_NAME": "chunk-mms-service",
+    "MMS_SERVICE_NAME": "chunk-mms-service",
+    "MMS_SERVICE_VERSION": "1.0.0",
+    "MMS_SERVICE_FALLBACK_VERSION": "1.0.0",
+    "UPDATE_FILE_NAME": "model.zip"
+  },
+  "folders": [
+    "/var/tmp/horizon/horizon1/fss-domain-socket",
+    "/var/tmp/horizon/horizon1/ess-auth",
+    "/var/tmp/horizon/horizon1/secrets",
+    "/var/tmp/horizon/horizon1/nmp"
+  ],
+  "local": {
+    "YOUR_DOCKERHUB_ID": "playbox21",
+    "DOCKER_REGISTRY": "hub.docker.com",
+    "DOCKER_TOKEN": "dckr_pat_wQJZTXR2WfGLohIHnqQylRMRIpk"
+  },
+  "register": {
+    "policy": {
+      "properties": [
+        {
+          "name": "openhorizon.allowPrivileged",
+          "value": true
+        }
+      ],
+      "deployment": {
+        "properties": [
+          {"name": "mms-agent", "value": "MMS Agent"},
+          {"name": "auto-dock", "value": "Auto Dock"},
+          {"name": "liquid-prep", "value": "Liquid Prep"}
+        ]
+      }
+    }
+  }  
+}  

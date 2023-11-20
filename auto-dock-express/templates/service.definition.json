@@ -1,0 +1,41 @@
+{
+  "org": "$HZN_ORG_ID",
+  "label": "$SERVICE_NAME for $ARCH",
+  "url": "$SERVICE_NAME",
+  "version": "$SERVICE_VERSION",
+  "arch": "$ARCH",
+  "public": true,
+  "sharable": "singleton",
+  "requiredServices": [],
+  "userInput": [
+    { "name": "MMS_OBJECT_TYPE", "label": "", "type": "string", "defaultValue": "$MMS_OBJECT_TYPE" },
+    { "name": "MMS_VOLUME_MOUNT", "label": "", "type": "string", "defaultValue": "$VOLUME_MOUNT" },
+    { "name": "UPDATE_FILE_NAME", "label": "", "type": "string", "defaultValue": "$UPDATE_FILE_NAME" },
+    { "name": "HORIZON_URL", "label": "", "type": "string", "defaultValue": "http://localhost:8510" },
+    { "name": "HZN_ORG_ID", "label": "", "type": "string", "defaultValue": "$HZN_ORG_ID" },
+    { "name": "HZN_EXCHANGE_USER_AUTH", "label": "", "type": "string", "defaultValue": "$HZN_EXCHANGE_USER_AUTH" },
+    { "name": "HZN_FSS_CSSURL", "label": "", "type": "string", "defaultValue": "$HZN_FSS_CSSURL" },
+    { "name": "HZN_EXCHANGE_URL", "label": "", "type": "string", "defaultValue": "$HZN_EXCHANGE_URL" },
+    { "name": "HZN_CONFIG_FILE", "label": "", "type": "string", "defaultValue": "$HZN_CONFIG_FILE" },
+    { "name": "css", "label": "", "type": "string", "defaultValue": "$HZN_CSS" },
+    { "name": "version", "label": "", "type": "string", "defaultValue": "$VERSION" }
+  ],
+  "deployment": {
+    "services": {
+      "$SERVICE_NAME": {
+        "image": "$SERVICE_CONTAINER",
+        "binds": [
+          "/data/var/lib/docker-bootstrap/volumes/mms_shared_volume/_data:$VOLUME_MOUNT:rw",
+          "/data/var/user/docker.sock:/var/run/docker.sock",
+          "/data/var/agent-install.crt:/data/var/agent-install.crt",
+          "/data/var/ieam-samsung-samsung.json:/data/var/ieam-samsung-samsung.json"
+        ],
+        "ports": [
+          { "HostIP": "0.0.0.0", "HostPort": "3009:3000/tcp" }
+        ],
+        "privileged": true,
+        "network": "host"
+      }
+    }
+  }
+}
