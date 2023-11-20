@@ -1,0 +1,89 @@
+{
+  "samsung/auto-dock-express_1.0.5_arm64": {
+  "owner": "samsung/samsungdevuser",
+  "label": "auto-dock-express for arm64",
+  "description": "",
+  "documentation": "",
+  "public": true,
+  "url": "auto-dock-express",
+  "version": "1.0.5",
+  "arch": "arm64",
+  "sharable": "singleton",
+  "matchHardware": {},
+  "requiredServices": [],
+  "userInput": [
+    {
+      "name": "MMS_OBJECT_TYPE",
+      "label": "",
+      "type": "string",
+      "defaultValue": "mms_agent_config"
+    },
+    {
+      "name": "MMS_VOLUME_MOUNT",
+      "label": "",
+      "type": "string",
+      "defaultValue": "/mms-shared"
+    },
+    {
+      "name": "UPDATE_FILE_NAME",
+      "label": "",
+      "type": "string",
+      "defaultValue": "mms-agent-config.json"
+    },
+    {
+      "name": "HORIZON_URL",
+      "label": "",
+      "type": "string",
+      "defaultValue": "http://localhost:8510"
+    },
+    {
+      "name": "HZN_ORG_ID",
+      "label": "",
+      "type": "string",
+      "defaultValue": "samsung"
+    },
+    {
+      "name": "HZN_EXCHANGE_USER_AUTH",
+      "label": "",
+      "type": "string",
+      "defaultValue": "iamapikey:7oAFNeQizZxHFUMZD2dicC-ZSGlZ8lFyd7QTjwnsfjZO"
+    },
+    {
+      "name": "HZN_FSS_CSSURL",
+      "label": "",
+      "type": "string",
+      "defaultValue": "https://cp-console.ieam42-edge-8e873dd4c685acf6fd2f13f4cdfb05bb-0000.us-south.containers.appdomain.cloud/edge-css/"
+    },
+    {
+      "name": "HZN_EXCHANGE_URL",
+      "label": "",
+      "type": "string",
+      "defaultValue": "https://cp-console.ieam42-edge-8e873dd4c685acf6fd2f13f4cdfb05bb-0000.us-south.containers.appdomain.cloud/edge-exchange/v1"
+    },
+    {
+      "name": "HZN_CONFIG_FILE",
+      "label": "",
+      "type": "string",
+      "defaultValue": "/data/var/ieam-samsung-samsung.json"
+    },
+    {
+      "name": "css",
+      "label": "",
+      "type": "string",
+      "defaultValue": "true"
+    },
+    {
+      "name": "version",
+      "label": "",
+      "type": "string",
+      "defaultValue": "v2.30.0-1194"
+    }
+  ],
+  "deployment": "{\"services\":{\"auto-dock-express\":{\"binds\":[\"/data/var/lib/docker-bootstrap/volumes/mms_shared_volume/_data:/mms-shared:rw\",\"/data/var/user/docker.sock:/var/run/docker.sock\",\"/data/var/agent-install.crt:/data/var/agent-install.crt\",\"/data/var/ieam-samsung-samsung.json:/data/var/ieam-samsung-samsung.json\"],\"image\":\"playbox21/auto-dock-express_arm64@sha256:d28d24a8f5cb6b1b225ec98ef3574e52eb15e45eb1950f14f2656a0bc6b58f54\",\"network\":\"host\",\"ports\":[{\"HostIP\":\"0.0.0.0\",\"HostPort\":\"3009:3000/tcp\"}],\"privileged\":true}}}",
+  "deploymentSignature": "cIkECVWYnHL4Tu+pb6Cd6/miLaOS84tZe4X1v1zopnDZSKURRv6bLXhL4XR/w9gpi5usTxn2IAggaPX8uj/fHRFzTOYiUse//qZeVfhL7A/ta1dWRHwoFb/IcpSrKoeQS7M34N2ppLF3H4SkJw+vGKFKlH+dlmsuVsvm62k0DQ+blcyIfS0S80eWHhz7wMf3YSIGb3TwddeqT/QXKwN5r8Bsa3lfeS+gMGMQNbHOekTz2HfzKPT4gjvINXPSjdu5dSVuEzA3v97PViOT7dHAvjtUpoDbtk1+TlI43CJc6ykXC/nB0wZVCtTBJi8nc/aY24JW9zlbRlttHJyW52F/kA==",
+  "clusterDeployment": "",
+  "clusterDeploymentSignature": "",
+  "lastUpdated": "2023-09-24T20:58:18.777279266Z[UTC]"
+}
+}
+
