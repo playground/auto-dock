@@ -19,15 +19,15 @@ VERB_DEBUG=5
 # You can add to these lists of supported values by setting/exporting the corresponding <varname>_APPEND variable to a string of space-separated words.
 # This allows you to experiment with platforms or variations that are not yet officially tested/supported.
 SUPPORTED_DEBIAN_VARIANTS=(ubuntu raspbian debian $SUPPORTED_DEBIAN_VARIANTS_APPEND)   # compared to what our detect_distro() sets DISTRO to
-SUPPORTED_DEBIAN_VERSION=(bullseye jammy focal bionic buster xenial stretch bookworm $SUPPORTED_DEBIAN_VERSION_APPEND)   # compared to what our detect_distro() sets CODENAME to
-SUPPORTED_DEBIAN_ARCH=(amd64 arm64 armhf s390x $SUPPORTED_DEBIAN_ARCH_APPEND)   # compared to dpkg --print-architecture
+SUPPORTED_DEBIAN_VERSION=(bullseye jammy focal bionic buster xenial stretch $SUPPORTED_DEBIAN_VERSION_APPEND)   # compared to what our detect_distro() sets CODENAME to
+SUPPORTED_DEBIAN_ARCH=(amd64 arm64 armhf $SUPPORTED_DEBIAN_ARCH_APPEND)   # compared to dpkg --print-architecture
 SUPPORTED_REDHAT_VARIANTS=(rhel redhatenterprise centos fedora $SUPPORTED_REDHAT_VARIANTS_APPEND)   # compared to what our detect_distro() sets DISTRO to
 # Note: version 8 and 9 are added because that is what /etc/os-release returns for DISTRO_VERSION_NUM on centos
-SUPPORTED_REDHAT_VERSION=(7.6 7.9 8.1 8.2 8.3 8.4 8.5 8.6 8.7 8.8 9.0 9.1 9.2 9.3 8 9 32 35 36 37 38 $SUPPORTED_REDHAT_VERSION_APPEND)   # compared to what our detect_distro() sets DISTRO_VERSION_NUM to. For fedora versions see https://fedoraproject.org/wiki/Releases,
-SUPPORTED_REDHAT_ARCH=(x86_64 aarch64 ppc64le s390x  riscv64 $SUPPORTED_REDHAT_ARCH_APPEND)     # compared to uname -m
+SUPPORTED_REDHAT_VERSION=(7.6 7.9 8.1 8.2 8.3 8.4 8.5 8.6 8.7 9.0 9.1 8 9 32 35 36 37 $SUPPORTED_REDHAT_VERSION_APPEND)   # compared to what our detect_distro() sets DISTRO_VERSION_NUM to. For fedora versions see https://fedoraproject.org/wiki/Releases,
+SUPPORTED_REDHAT_ARCH=(x86_64 aarch64 ppc64le riscv64 $SUPPORTED_REDHAT_ARCH_APPEND)     # compared to uname -m
 
-SUPPORTED_EDGE_CLUSTER_ARCH=(amd64 s390x)
-SUPPORTED_ANAX_IN_CONTAINER_ARCH=(amd64 arm64 s390x)
+SUPPORTED_EDGE_CLUSTER_ARCH=(amd64)
+SUPPORTED_ANAX_IN_CONTAINER_ARCH=(amd64 arm64)
 
 SUPPORTED_OS=(macos linux)   # compared to what our get_os() returns
 SUPPORTED_LINUX_DISTRO=(${SUPPORTED_DEBIAN_VARIANTS[@]} ${SUPPORTED_REDHAT_VARIANTS[@]})   # compared to what our detect_distro() sets DISTRO to
@@ -48,7 +48,7 @@ CURL_RETRY_PARMS="--retry 5 --retry-connrefused --retry-max-time 120"
 
 SEMVER_REGEX='^[0-9]+\.[0-9]+(\.[0-9]+)+'   # matches a version like 1.2.3 (must be at least 3 fields). Also allows a bld num on the end like: 1.2.3-RC1
 
-# The following variable will need to have the $ARCH prepended to it before it can be used
+# The following variable will need to have the $ARCH prepended to it before it can be used - currently only amd64 and arm64 are built
 DEFAULT_AGENT_IMAGE_TAR_FILE='_anax.tar.gz'
 
 INSTALLED_AGENT_CFG_FILE="/etc/default/horizon"
@@ -58,6 +58,7 @@ AGENT_CONTAINER_PORT_BASE=8080
 DEFAULT_AGENT_NAMESPACE="openhorizon-agent"
 SERVICE_ACCOUNT_NAME="agent-service-account"
 CLUSTER_ROLE_BINDING_NAME="openhorizon-agent-cluster-rule"
+ROLE_BINDING_NAME="role-binding"
 DEPLOYMENT_NAME="agent"
 SECRET_NAME="openhorizon-agent-secrets"
 CRONJOB_AUTO_UPGRADE_NAME="auto-upgrade-cronjob"
@@ -68,10 +69,9 @@ GET_RESOURCE_MAX_TRY=5
 POD_ID=""
 HZN_ENV_FILE="/tmp/agent-install-horizon-env"
 DEFAULT_OCP_INTERNAL_URL_FOR_EDGE_CLUSTER_REGISTRY="image-registry.openshift-image-registry.svc:5000"
+DEFAULT_AGENT_K8S_IMAGE_TAR_FILE='amd64_anax_k8s.tar.gz'
+DEFAULT_CRONJOB_AUTO_UPGRADE_K8S_TAR_FILE='amd64_auto-upgrade-cronjob_k8s.tar.gz'
 EDGE_CLUSTER_TAR_FILE_NAME='horizon-agent-edge-cluster-files.tar.gz'
-# The following variables will need to have the $ARCH prepended before they can be used
-DEFAULT_AGENT_K8S_IMAGE_TAR_FILE='_anax_k8s.tar.gz'
-DEFAULT_CRONJOB_AUTO_UPGRADE_K8S_TAR_FILE='_auto-upgrade-cronjob_k8s.tar.gz'
 
 # agent upgrade types. To update the certificate only, just do "-G cert" or set AGENT_UPGRADE_TYPES="cert"
 UPGRADE_TYPE_SW="software"
@@ -132,7 +132,7 @@ Additional Variables (in environment or config file):
 
 Additional Edge Device Variables (in environment or config file):
     NODE_ID_MAPPING_FILE: File to map hostname or IP to node id, for bulk install.  Default: node-id-mapping.csv
-    AGENT_IMAGE_TAR_FILE: the file name of the device agent docker image in tar.gz format. Default: \${ARCH}$DEFAULT_AGENT_IMAGE_TAR_FILE
+    AGENT_IMAGE_TAR_FILE: the file name of the device agent docker image in tar.gz format. Default: $DEFAULT_AGENT_IMAGE_TAR_FILE
     AGENT_WAIT_MAX_SECONDS: Maximum seconds to wait for the Horizon agent to start or stop. Default: 30
 
 Optional Edge Device Environment Variables For Testing New Distros - Not For Production Use
@@ -153,10 +153,8 @@ Additional Edge Cluster Variables (in environment or config file):
     AGENT_NAMESPACE: The namespace the agent should run in. Default: openhorizon-agent
     AGENT_WAIT_MAX_SECONDS: Maximum seconds to wait for the Horizon agent to start or stop. Default: 30
     AGENT_DEPLOYMENT_STATUS_TIMEOUT_SECONDS: Maximum seconds to wait for the agent deployment rollout status to be successful. Default: 75
-    AGENT_K8S_IMAGE_TAR_FILE: the file name of the edge cluster agent docker image in tar.gz format. Default: \${ARCH}$DEFAULT_AGENT_K8S_IMAGE_TAR_FILE
-    CRONJOB_AUTO_UPGRADE_K8S_TAR_FILE: the file name of the edge cluster auto-upgrade-cronjob cronjob docker image in tar.gz format. Default: \${ARCH}$DEFAULT_CRONJOB_AUTO_UPGRADE_K8S_TAR_FILE
-    AGENT_NAMESPACE: The cluster namespace that the agent will be installed in
-    NAMESPACE_SCOPED: specify this value if the edge cluster agent is namespace-scoped agent
+    AGENT_K8S_IMAGE_TAR_FILE: the file name of the edge cluster agent docker image in tar.gz format. Default: $DEFAULT_AGENT_K8S_IMAGE_TAR_FILE
+    CRONJOB_AUTO_UPGRADE_K8S_TAR_FILE: the file name of the edge cluster auto-upgrade-cronjob cronjob docker image in tar.gz format. Default: $DEFAULT_CRONJOB_AUTO_UPGRADE_K8S_TAR_FILE
 EndOfMessage
     exit $exit_code
 }
@@ -697,24 +695,22 @@ function download_css_file() {
         download_with_retry $remote_path $local_file "$cert_flag" $exch_creds
     fi
 
-    if [[ -n $AGENT_CERT_FILE && -f $AGENT_CERT_FILE ]]; then
-        local version_from_cert_file
-        getCertVersionFromCertFile version_from_cert_file
+    local version_from_cert_file
+    getCertVersionFromCertFile version_from_cert_file
 
-        if [[ -n $AGENT_CERT_VERSION ]]; then
-            if is_linux; then  # Skip writing comment to cert file for MacOS since it failed on M1 machine in mac_trust_cert step
-                if [[ -z $version_from_cert_file ]]; then
-                    # write AGENT_CERT_VERSION in file comment as ------OpenHorizon Version x.x.x-----
-                    version_to_add="-----OpenHorizon Version $AGENT_CERT_VERSION-----"
-                    log_debug "add this line $version_to_add to cert file: $AGENT_CERT_FILE"
-                
-                    echo "-----OpenHorizon Version $AGENT_CERT_VERSION-----" > tmp-agent-install.crt
-                    cat $AGENT_CERT_FILE >> tmp-agent-install.crt
-                    mv tmp-agent-install.crt $AGENT_CERT_FILE
-                elif [[ "$AGENT_CERT_VERSION" != "$version_from_cert_file" ]]; then
-                    # if version in cert != version in css filename, overwrite to use version in css filename
-                    sed -i "s#$version_from_cert_file#${AGENT_CERT_VERSION}#g" $AGENT_CERT_FILE 
-                fi
+    if [[ -n $AGENT_CERT_VERSION ]]; then
+        if is_linux; then  # Skip writing comment to cert file for MacOS since it failed on M1 machine in mac_trust_cert step
+            if [[ -z $version_from_cert_file ]]; then
+                # write AGENT_CERT_VERSION in file comment as ------OpenHorizon Version x.x.x-----
+                version_to_add="-----OpenHorizon Version $AGENT_CERT_VERSION-----"
+                log_debug "add this line $version_to_add to cert file"
+            
+                echo "-----OpenHorizon Version $AGENT_CERT_VERSION-----" > tmp-agent-install.crt
+                cat $AGENT_CERT_FILE_DEFAULT >> tmp-agent-install.crt
+                mv tmp-agent-install.crt $AGENT_CERT_FILE_DEFAULT
+            elif [[ "$AGENT_CERT_VERSION" != "$version_from_cert_file" ]]; then
+                # if version in cert != version in css filename, overwrite to use version in css filename
+                sed -i "s#$version_from_cert_file#${AGENT_CERT_VERSION}#g" $AGENT_CERT_FILE_DEFAULT 
             fi
         fi
     fi
@@ -771,7 +767,7 @@ function getCertVersionFromCertFile() {
         else
             continue
         fi
-    done < "$AGENT_CERT_FILE"
+    done < "$AGENT_CERT_FILE_DEFAULT"
 
     log_debug "cert_ver_from_file=$cert_ver_from_file"
     eval $__resultvar="'${cert_ver_from_file}'"
@@ -1175,8 +1171,6 @@ function get_all_variables() {
 
         local image_arch=$(get_cluster_image_arch)
         check_support "${SUPPORTED_EDGE_CLUSTER_ARCH[*]}" "${image_arch}" 'kubernetes edge cluster architectures'
-        DEFAULT_AGENT_K8S_IMAGE_TAR_FILE=${image_arch}${DEFAULT_AGENT_K8S_IMAGE_TAR_FILE}
-        DEFAULT_CRONJOB_AUTO_UPGRADE_K8S_TAR_FILE=${image_arch}${DEFAULT_CRONJOB_AUTO_UPGRADE_K8S_TAR_FILE}
 
         if [[ "$USE_EDGE_CLUSTER_REGISTRY" == "true" ]]; then
             local default_image_registry_on_edge_cluster
@@ -2292,11 +2286,7 @@ function redhat_device_install_prereqs() {
         fi
     fi
 
-    # Curl likely already on a RHEL system so only try to install it if missing - caused a problem for RHEL 9.2
-    if ! isCmdInstalled curl; then
-        dnf install -yq curl
-    fi
-    dnf install -yq jq cronie
+    dnf install -yq curl jq cronie
 
     # cron will be used for agent auto upgrade process
     systemctl start crond
@@ -3558,13 +3548,10 @@ function create_horizon_env() {
         log_verbose "$HZN_ENV_FILE already exists. Will overwrite it..."
         rm $HZN_ENV_FILE
     fi
-    if [[ -f $AGENT_CERT_FILE ]]; then
-        local cert_name=$(basename ${AGENT_CERT_FILE})
-        local cluster_cert_path="/etc/default/cert"
-        log_verbose "copy cert file to $cluster_cert_path ..."
-        mkdir -p $cluster_cert_path && cp ${AGENT_CERT_FILE} $cluster_cert_path
-        echo "HZN_MGMT_HUB_CERT_PATH=$cluster_cert_path/$cert_name" >>$HZN_ENV_FILE
-    fi
+    local cert_name=$(basename ${AGENT_CERT_FILE})
+    local cluster_cert_path="/etc/default/cert"
+    log_verbose "copy cert file to $cluster_cert_path ..."
+    mkdir -p $cluster_cert_path && cp ${AGENT_CERT_FILE} $cluster_cert_path
 
     echo "HZN_EXCHANGE_URL=${HZN_EXCHANGE_URL}" >>$HZN_ENV_FILE
     echo "HZN_FSS_CSSURL=${HZN_FSS_CSSURL}" >>$HZN_ENV_FILE
@@ -3579,6 +3566,7 @@ function create_horizon_env() {
     fi
     echo "HZN_DEVICE_ID=${NODE_ID}" >>$HZN_ENV_FILE
     echo "HZN_NODE_ID=${NODE_ID}" >> $HZN_ENV_FILE
+    echo "HZN_MGMT_HUB_CERT_PATH=$cluster_cert_path/$cert_name" >>$HZN_ENV_FILE
     echo "HZN_AGENT_PORT=8510" >>$HZN_ENV_FILE
     echo "HZN_CONFIG_VERSION=${HZN_CONFIG_VERSION}" >> $HZN_ENV_FILE
     log_debug "create_horizon_env() end"
@@ -3592,11 +3580,6 @@ function prepare_k8s_deployment_file() {
     # InitContainer needs to be removed for ocp because it breaks mounted directory permisson. In ocp, the permission of volume is configured by scc.
     if is_ocp_cluster; then
         sed -i -e '/START_NOT_FOR_OCP/,/END_NOT_FOR_OCP/d' deployment-template.yml
-    fi
-
-    if [[ ! -f $AGENT_CERT_FILE ]]; then
-        log_debug "agent cert file is not used, remove secret and secret mount section from deployment-template.yml ..."
-        sed -i -e '{/START_CERT_VOL/,/END_CERT_VOL/d;}' deployment-template.yml
     fi
 
     sed -e "s#__AgentNameSpace__#${AGENT_NAMESPACE}#g" -e "s#__OrgId__#\"${HZN_ORG_ID}\"#g" deployment-template.yml >deployment.yml
@@ -3767,7 +3750,7 @@ function create_namespace() {
 function create_service_account() {
     log_debug "create_service_account() begin"
 
-    log_verbose "checking if serviceaccount exist..."
+    log_verbose "checking if serviceaccont exist..."
     if ! $KUBECTL get serviceaccount ${SERVICE_ACCOUNT_NAME} -n ${AGENT_NAMESPACE} 2>/dev/null; then
         log_verbose "serviceaccount ${SERVICE_ACCOUNT_NAME} does not exist, creating..."
         $KUBECTL create serviceaccount ${SERVICE_ACCOUNT_NAME} -n ${AGENT_NAMESPACE}
@@ -3778,9 +3761,34 @@ function create_service_account() {
         log_info "serviceaccount ${SERVICE_ACCOUNT_NAME} exists, skip creating serviceaccount"
     fi
 
-    create_cluster_role_binding
+    if [[ "$AGENT_NAMESPACE" == "$DEFAULT_AGENT_NAMESPACE" ]]; then
+        log_info "agent namespace ($AGENT_NAMESPACE) is default namespace: $DEFAULT_AGENT_NAMESPACE, will create clusterrolebinding"
+        create_cluster_role_binding
+    else
+        log_info "creating rolebinding under agent namespace $AGENT_NAMESPACE"
+	create_namespace_admin_role
+        create_role_binding
+    fi
 
     log_debug "create_service_account() end"
+}
+
+# Cluster only: to create a admin role under agent namespace
+function create_namespace_admin_role() {
+    agent_namespace_admin_role_name="agent-namespace-admin"
+    log_debug "create_namespace_admin_role begin"
+    log_verbose "checking if $agent_namespace_admin_role_name role exist under namespace $AGENT_NAMESPACE..."
+
+    if ! $KUBECTL get role ${agent_namespace_admin_role_name} -n ${AGENT_NAMESPACE} 2>/dev/null; then
+        log_verbose "creating ${agent_namespace_admin_role_name} under agent namespace ${AGENT_NAMESPACE}..."
+        $KUBECTL apply -f role.yml -n ${AGENT_NAMESPACE}
+        chk $? "creating admin role under namespace ${AGENT_NAMESPACE}"
+        log_info "${agent_namespace_admin_role_name} is created under namespace ${AGENT_NAMESPACE}"
+    else
+        log_info "${agent_namespace_admin_role_name} exists, skip creating role"
+    fi
+
+    log_debug "create_namespace_admin_role end"
 }
 
 # Cluster only: to create cluster role binding, bind service account to cluster admin
@@ -3801,25 +3809,40 @@ function create_cluster_role_binding() {
     log_debug "create_cluster_role_binding() end"
 }
 
+# Cluster only: to create role binding, bind service account to admin (admin under agent namespace)
+function create_role_binding() {
+    log_debug "create_role_binding() begin"
+
+    AGENT_ROLE_BINDING="$AGENT_NAMESPACE-$ROLE_BINDING_NAME"
+    log_verbose "checking if rolebinding $AGENT_ROLE_BINDING exist..."
+
+    if ! $KUBECTL get rolebinding ${AGENT_ROLE_BINDING} -n ${AGENT_NAMESPACE} 2>/dev/null; then
+        log_verbose "Binding ${SERVICE_ACCOUNT_NAME} to admin..."
+        $KUBECTL create rolebinding ${AGENT_ROLE_BINDING} --serviceaccount=${AGENT_NAMESPACE}:${SERVICE_ACCOUNT_NAME} --role=agent-namespace-admin -n ${AGENT_NAMESPACE}
+        chk $? "creating rolebinding for ${AGENT_NAMESPACE}:${SERVICE_ACCOUNT_NAME}"
+        log_info "rolebinding ${AGENT_ROLE_BINDING} created"
+    else
+        log_info "rolebinding ${AGENT_ROLE_BINDING} exists, skip creating rolebinding"
+    fi
+
+    log_debug "create_role_binding() end"
+}
+
 # Cluster only: to create secret from cert file for agent deployment
 function create_secret() {
     log_debug "create_secrets() begin"
 
-    if [[ ! -f $AGENT_CERT_FILE ]]; then
-        log_debug "agent cert file is not used, skip creating secret ..."
-        sed -i -e '{/START_CERT_VOL/,/END_CERT_VOL/d;}' deployment-template.yml
-    else
-        log_verbose "checking if secret ${SECRET_NAME} exist..."
+    log_verbose "checking if secret ${SECRET_NAME} exist..."
 
-        if ! $KUBECTL get secret ${SECRET_NAME} -n ${AGENT_NAMESPACE} 2>/dev/null; then
-            log_verbose "creating secret for cert file..."
-            $KUBECTL create secret generic ${SECRET_NAME} --from-file=${AGENT_CERT_FILE} -n ${AGENT_NAMESPACE}
-            chk $? "creating secret ${SECRET_NAME} from cert file ${AGENT_CERT_FILE}"
-            log_info "secret ${SECRET_NAME} created"
-        else
-            log_info "secret ${SECRET_NAME} exists, skip creating secret"
-        fi
+    if ! $KUBECTL get secret ${SECRET_NAME} -n ${AGENT_NAMESPACE} 2>/dev/null; then
+        log_verbose "creating secret for cert file..."
+        $KUBECTL create secret generic ${SECRET_NAME} --from-file=${AGENT_CERT_FILE} -n ${AGENT_NAMESPACE}
+        chk $? "creating secret ${SECRET_NAME} from cert file ${AGENT_CERT_FILE}"
+        log_info "secret ${SECRET_NAME} created"
+    else
+        log_info "secret ${SECRET_NAME} exists, skip creating secret"
     fi
+
     log_debug "create_secrets() end"
 }
 
@@ -3907,16 +3930,16 @@ function update_cronjobs() {
     log_debug "update_cronjobs() begin"
 
     # For auto-upgrade-cronjob
-    if [[ "$IS_CRONJOB_AUTO_UPGRADE_IMAGE_VERSION_SAME" != "true" ]]; then
-        if $KUBECTL get cronjob ${CRONJOB_AUTO_UPGRADE_NAME} -n ${AGENT_NAMESPACE} >/dev/null 2>&1; then
-            # cronjob exists, delete it
-            log_verbose "Found cronjob ${CRONJOB_AUTO_UPGRADE_NAME} in ${AGENT_NAMESPACE} namespace, deleting the old cronjob..."
-            $KUBECTL delete cronjob ${CRONJOB_AUTO_UPGRADE_NAME} -n ${AGENT_NAMESPACE} >/dev/null 2>&1
-            chk $? "deleting cronjob for auto-upgrade-cronjob on cluster"
-            log_verbose "Old cronjob ${CRONJOB_AUTO_UPGRADE_NAME} in ${AGENT_NAMESPACE} namespace is deleted"
-        fi
-        create_cronjobs
+    if $KUBECTL get cronjob ${CRONJOB_AUTO_UPGRADE_NAME} -n ${AGENT_NAMESPACE} >/dev/null 2>&1; then
+        # cronjob exists, delete it
+        log_verbose "Found cronjob ${CRONJOB_AUTO_UPGRADE_NAME} in ${AGENT_NAMESPACE} namespace, deleting the old cronjob..."
+        $KUBECTL delete cronjob ${CRONJOB_AUTO_UPGRADE_NAME} -n ${AGENT_NAMESPACE} >/dev/null 2>&1
+        chk $? "deleting cronjob for auto-upgrade-cronjob on cluster"
+        log_verbose "Old cronjob ${CRONJOB_AUTO_UPGRADE_NAME} in ${AGENT_NAMESPACE} namespace is deleted"
     fi
+
+    create_cronjobs
+
     log_debug "update_cronjobs() end"
 }
 
@@ -3941,12 +3964,8 @@ function create_persistent_volume() {
 function check_resources_for_deployment() {
     log_debug "check_resources_for_deployment() begin"
     # check secrets/configmap/persistent
-    if [[ -f $AGENT_CERT_FILE ]]; then
-        $KUBECTL get secret ${SECRET_NAME} -n ${AGENT_NAMESPACE} >/dev/null
-        secret_ready=$?
-    else
-        secret_ready=0
-    fi
+    $KUBECTL get secret ${SECRET_NAME} -n ${AGENT_NAMESPACE} >/dev/null
+    secret_ready=$?
 
     $KUBECTL get configmap ${CONFIGMAP_NAME} -n ${AGENT_NAMESPACE} >/dev/null
     configmap_ready=$?
