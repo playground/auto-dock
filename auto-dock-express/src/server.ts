@@ -13,7 +13,7 @@ export class Server {
   params: Params = <Params>{};
   app = express();
   apiUrl = `${process.env.SERVERLESS_ENDPOINT}`
-  constructor(private port = 3000) {
+  constructor(private port = 8888) {
     this.initialise()
   }
 
