@@ -4,7 +4,7 @@ exec = cp.exec;
 let timer;
 const argv: string = process.argv.slice(2).toString()
 const match = argv.match(/--port=/)
-const port = match ? parseInt(argv.replace(match[0], '')) : 3000;
+const port = match ? parseInt(argv.replace(match[0], '')) : 8888;
 
 const find = (name) => {
   exec(`ps -ef | grep "${name}"`, {maxBuffer: 1024 * 2000}, (err, stdout, stderr) => {
