@@ -1,6 +1,6 @@
 {
   "name": "auto-dock-express",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "auto-dock.js",
   "scripts": {
