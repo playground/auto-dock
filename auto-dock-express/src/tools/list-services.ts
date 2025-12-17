@@ -1,12 +1,63 @@
 /**
  * list-services.ts
- * 
- * MCP tool for listing all services using hzn CLI
+ *
+ * MCP tool for listing all services using hzn CLI with API fallback
  */
 
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { executeHznCommand, getErrorMessage, formatJsonOutput } from './common';
+import { executeHznCommand, formatJsonOutput } from './common';
+import { makeHttpRequest, getErrorMessage, getHeadersFromContext } from '../services/common';
+
+/**
+ * Check if hzn CLI is available
+ */
+async function isHznAvailable(): Promise<boolean> {
+  try {
+    await executeHznCommand('hzn version');
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
+ * List services using Exchange API
+ */
+async function listServicesViaApi(params: any, context: any): Promise<any> {
+  try {
+    const { url, credential, organization } = getHeadersFromContext(params, context);
+    
+    if (!url || !credential || !organization) {
+      throw new Error('Missing required Exchange configuration. Please set HZN_EXCHANGE_URL, HZN_ORG_ID, and HZN_EXCHANGE_USER_AUTH environment variables.');
+    }
+    
+    const exchangeUrl = `${url}/${organization}/services`;
+    
+    console.log(`Fetching services from Exchange API at ${exchangeUrl}`);
+    const response = await makeHttpRequest(exchangeUrl, {
+      Authorization: `Basic ${credential}`
+    });
+    
+    // If response has content property, it's already formatted as ToolResponse (error case)
+    if (response && typeof response === 'object' && 'content' in response) {
+      return response;
+    }
+    
+    // Otherwise, wrap the successful response in proper MCP format
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(response, null, 2)
+        }
+      ]
+    };
+  } catch (error) {
+    console.error(`Error listing services: ${error}`);
+    return getErrorMessage(error);
+  }
+}
 
 /**
  * Register the list-services tool with the MCP server
@@ -14,7 +65,8 @@ import { executeHznCommand, getErrorMessage, formatJsonOutput } from './common';
 export function registerListServicesTool(server: McpServer) {
   const toolName = 'list-services';
   const toolDescription = `Use this tool to list all services in the Open Horizon Exchange.
-This executes the 'hzn exchange service list' command.
+This tool will attempt to use the 'hzn exchange service list' command if the hzn CLI is available.
+If the hzn CLI is not installed, it will fall back to making a direct API call to the Exchange.
 
 Returns a JSON object with service IDs as keys and service details as values.
 
@@ -27,26 +79,44 @@ Service names often include organization, name, version and architecture like "m
   
   const toolCallback = async (params: any, context: any): Promise<any> => {
     try {
-      // Build the command
-      let command = 'hzn exchange service list';
+      // Check if hzn CLI is available
+      const hznAvailable = await isHznAvailable();
       
-      // Add organization flag if provided
-      if (params.org) {
-        command += ` -o ${params.org}`;
+      if (hznAvailable) {
+        // Try using hzn CLI first
+        console.log('Using hzn CLI to list services');
+        try {
+          // Build the command
+          let command = 'hzn exchange service list';
+          
+          // Add organization flag if provided
+          if (params.org) {
+            command += ` -o ${params.org}`;
+          }
+          
+          // Execute the command
+          const output = await executeHznCommand(command);
+          
+          // Format and return the output
+          return {
+            content: [
+              {
+                type: 'text',
+                text: formatJsonOutput(output)
+              }
+            ]
+          };
+        } catch (cliError) {
+          console.warn('hzn CLI failed, falling back to API:', cliError);
+          // Fall through to API fallback
+        }
+      } else {
+        console.log('hzn CLI not available, using Exchange API');
       }
       
-      // Execute the command
-      const output = await executeHznCommand(command);
+      // Fallback to API call
+      return await listServicesViaApi(params, context);
       
-      // Format and return the output
-      return {
-        content: [
-          {
-            type: 'text',
-            text: formatJsonOutput(output)
-          }
-        ]
-      };
     } catch (error) {
       console.error(`Error listing services: ${error}`);
       return getErrorMessage(error);
