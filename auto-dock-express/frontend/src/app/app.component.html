@@ -1,0 +1,51 @@
+<div class="min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-white dark:bg-gray-800 shadow-sm">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center">
+        <img src="assets/mcp-orchestrator-logo.svg" alt="MCP Orchestrator Logo" class="h-8 w-8 mr-2">
+        <h1 class="text-xl font-semibold text-primary-700 dark:text-primary-300">MCP Orchestrator</h1>
+      </div>
+      <nav>
+        <ul class="flex space-x-4">
+          <li>
+            <a routerLink="/" routerLinkActive="text-primary-600 dark:text-primary-400" [routerLinkActiveOptions]="{exact: true}" 
+               class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400">
+              Home
+            </a>
+          </li>
+          <li>
+            <a routerLink="/chat" routerLinkActive="text-primary-600 dark:text-primary-400"
+               class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400">
+              Chat
+            </a>
+          </li>
+          <li>
+            <a routerLink="/settings" routerLinkActive="text-primary-600 dark:text-primary-400"
+               class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400">
+              Settings
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 py-6">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+      <p>&copy; {{ 2025 }} MCP Orchestrator. All rights reserved.</p>
+      
+      <!-- MCP Server Status -->
+      <div *ngIf="defaultServer" class="flex items-center">
+        <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+        <span>MCP: {{ defaultServer.name }} ({{ defaultServer.url }})</span>
+      </div>
+    </div>
+  </footer>
+</div>

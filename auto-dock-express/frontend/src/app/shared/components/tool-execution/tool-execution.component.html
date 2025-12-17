@@ -1,0 +1,60 @@
+<div class="tool-execution-container mb-3">
+  <div 
+    class="tool-header flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+    (click)="toggleExpanded()">
+    <div class="flex items-center gap-2">
+      <svg 
+        class="w-4 h-4 transition-transform"
+        [class.rotate-90]="isExpanded"
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+      <span class="font-mono text-sm font-semibold">{{ toolExecution.toolName }}</span>
+      <span 
+        class="px-2 py-0.5 text-xs rounded-full"
+        [class.bg-green-100]="toolExecution.success"
+        [class.text-green-800]="toolExecution.success"
+        [class.dark:bg-green-900]="toolExecution.success"
+        [class.dark:text-green-200]="toolExecution.success"
+        [class.bg-red-100]="!toolExecution.success"
+        [class.text-red-800]="!toolExecution.success"
+        [class.dark:bg-red-900]="!toolExecution.success"
+        [class.dark:text-red-200]="!toolExecution.success">
+        {{ toolExecution.success ? 'Success' : 'Error' }}
+      </span>
+    </div>
+    <span class="text-xs text-gray-500 dark:text-gray-400">
+      {{ isExpanded ? 'Hide details' : 'Show details' }}
+    </span>
+  </div>
+
+  <div 
+    class="tool-details mt-2 overflow-hidden transition-all duration-300"
+    [class.max-h-0]="!isExpanded"
+    [class.max-h-[1000px]]="isExpanded">
+    
+    <div class="p-3 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+      <!-- Request Section -->
+      <div class="mb-4">
+        <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Request</h4>
+        <pre class="text-xs bg-gray-50 dark:bg-gray-800 p-3 rounded overflow-x-auto"><code>{{ formatJson(toolExecution.request) }}</code></pre>
+      </div>
+
+      <!-- Response Section -->
+      <div>
+        <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Response</h4>
+        <pre class="text-xs bg-gray-50 dark:bg-gray-800 p-3 rounded overflow-x-auto"><code>{{ formatJson(toolExecution.response) }}</code></pre>
+      </div>
+
+      <!-- Error Section (if applicable) -->
+      <div *ngIf="!toolExecution.success && toolExecution.error" class="mt-4">
+        <h4 class="text-xs font-semibold text-red-600 dark:text-red-400 mb-2">Error</h4>
+        <div class="text-xs bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 p-3 rounded">
+          {{ toolExecution.error }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

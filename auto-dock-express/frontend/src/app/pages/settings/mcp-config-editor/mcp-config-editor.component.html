@@ -1,0 +1,99 @@
+<div class="mcp-config-editor">
+  <div class="editor-header">
+    <h2>MCP Server Configuration</h2>
+    <p class="description">
+      Configure MCP servers using the Claude Desktop configuration format.
+      Each server requires a command, args array, and optional environment variables.
+    </p>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button class="btn btn-primary" (click)="saveConfiguration()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">💾 Save Configuration</span>
+      <span *ngIf="isLoading">⏳ Saving...</span>
+    </button>
+    <button class="btn btn-secondary" (click)="formatJson()" [disabled]="isLoading">
+      ✨ Format JSON
+    </button>
+    <button class="btn btn-secondary" (click)="loadExample()" [disabled]="isLoading">
+      📝 Load Example
+    </button>
+    <button class="btn btn-secondary" (click)="exportConfiguration()" [disabled]="isLoading">
+      📤 Export
+    </button>
+    <label class="btn btn-secondary" [class.disabled]="isLoading">
+      📥 Import
+      <input type="file" accept=".json" (change)="importConfiguration($event)" style="display: none;" [disabled]="isLoading">
+    </label>
+    <button
+      class="btn btn-toggle"
+      [class.btn-masked]="isSensitiveDataMasked"
+      [class.btn-visible]="!isSensitiveDataMasked"
+      (click)="toggleSensitiveDataMasking()"
+      [disabled]="isLoading"
+      title="{{ isSensitiveDataMasked ? 'Show sensitive data' : 'Mask sensitive data' }}">
+      <span *ngIf="isSensitiveDataMasked">👁️ Show Sensitive Data</span>
+      <span *ngIf="!isSensitiveDataMasked">🔒 Mask Sensitive Data</span>
+    </button>
+    <button class="btn btn-danger" (click)="clearConfiguration()" [disabled]="isLoading">
+      🗑️ Clear
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages">
+    <div class="alert alert-success" *ngIf="successMessage">
+      ✅ {{ '{{' }} successMessage {{ '}}' }}
+    </div>
+    <div class="alert alert-error" *ngIf="errorMessage">
+      ❌ {{ '{{' }} errorMessage {{ '}}' }}
+    </div>
+  </div>
+
+  <!-- JSON Editor -->
+  <div class="editor-container">
+    <textarea
+      class="json-editor"
+      [value]="configJson"
+      (input)="onConfigChange($any($event.target).value)"
+      [disabled]="isLoading"
+      placeholder="Enter MCP configuration in JSON format..."
+      spellcheck="false"
+    ></textarea>
+  </div>
+
+  <!-- Help Section -->
+  <div class="help-section">
+    <h3>Configuration Format</h3>
+    <pre class="code-example">{{ '{' }}
+  "mcpServers": {{ '{' }}
+    "server-name": {{ '{' }}
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:3000/mcp",
+        "--header",
+        "api-key:YOUR_API_KEY",
+        "--header",
+        "Authorization:Bearer YOUR_TOKEN"
+      ],
+      "env": {{ '{' }}
+        "AUTH_TOKEN": "Bearer YOUR_TOKEN"
+      {{ '}' }}
+    {{ '}' }}
+  {{ '}' }}
+{{ '}' }}</pre>
+    <div class="help-notes">
+      <h4>Notes:</h4>
+      <ul>
+        <li><strong>command</strong>: The command to run (e.g., "npx", "node")</li>
+        <li><strong>args</strong>: Array of arguments including the MCP server URL and headers</li>
+        <li><strong>--header</strong>: Use to pass headers in format "key:value"</li>
+        <li><strong>env</strong>: Optional environment variables that can be referenced in args using ${{ '{' }}VAR_NAME{{ '}' }}</li>
+        <li>Headers are extracted and sent to the backend for MCP server communication</li>
+      </ul>
+    </div>
+  </div>
+</div>

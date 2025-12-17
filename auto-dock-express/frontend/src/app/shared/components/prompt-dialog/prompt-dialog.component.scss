@@ -1,0 +1,202 @@
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.dialog-container {
+  background: var(--bg-primary, #1e1e1e);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s ease-out;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color, #333);
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary, #e0e0e0);
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--text-secondary, #999);
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: var(--hover-bg, #2a2a2a);
+      color: var(--text-primary, #e0e0e0);
+    }
+  }
+}
+
+.dialog-content {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.prompt-info {
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary, #e0e0e0);
+  }
+
+  .prompt-description {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary, #999);
+    line-height: 1.5;
+  }
+}
+
+.prompt-form {
+  .form-group {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary, #e0e0e0);
+
+      .required {
+        color: var(--error-color, #ff6b6b);
+        margin-left: 4px;
+      }
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color, #333);
+      border-radius: 6px;
+      background-color: var(--input-bg, #2a2a2a);
+      color: var(--text-primary, #e0e0e0);
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color, #007bff);
+      }
+
+      &::placeholder {
+        color: var(--text-tertiary, #666);
+      }
+    }
+
+    .help-text {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-tertiary, #666);
+      line-height: 1.4;
+    }
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color, #333);
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+
+    &.btn-secondary {
+      background-color: transparent;
+      color: var(--text-secondary, #999);
+      border: 1px solid var(--border-color, #333);
+
+      &:hover {
+        background-color: var(--hover-bg, #2a2a2a);
+        color: var(--text-primary, #e0e0e0);
+      }
+    }
+
+    &.btn-primary {
+      background-color: var(--primary-color, #007bff);
+      color: white;
+
+      &:hover:not(:disabled) {
+        background-color: var(--primary-hover, #0056b3);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Made with Bob

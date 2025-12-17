@@ -1,0 +1,51 @@
+<div class="min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center px-4 py-12">
+  <div class="text-center max-w-3xl mx-auto">
+    <h1 class="text-4xl md:text-5xl font-bold text-primary-600 dark:text-primary-400 mb-6">
+      Welcome to MCP Orchestrator
+    </h1>
+    
+    <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8">
+      Your personal AI assistant, similar to Claude but running right on your desktop.
+    </p>
+    
+    <div class="flex flex-col md:flex-row gap-4 justify-center mb-12">
+      <button 
+        (click)="startChat()" 
+        class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg text-lg transition-colors">
+        Start Chatting
+      </button>
+      
+      <a 
+        routerLink="/settings" 
+        class="px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium rounded-lg text-lg transition-colors">
+        Settings
+      </a>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+        <div class="text-primary-500 text-3xl mb-4">💬</div>
+        <h3 class="text-xl font-semibold mb-2">Natural Conversations</h3>
+        <p class="text-gray-600 dark:text-gray-400">
+          Chat naturally with MCP Orchestrator, your AI assistant that understands context and nuance.
+        </p>
+      </div>
+      
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+        <div class="text-primary-500 text-3xl mb-4">🔒</div>
+        <h3 class="text-xl font-semibold mb-2">Privacy First</h3>
+        <p class="text-gray-600 dark:text-gray-400">
+          Your conversations stay on your device, ensuring your data remains private.
+        </p>
+      </div>
+      
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+        <div class="text-primary-500 text-3xl mb-4">⚡</div>
+        <h3 class="text-xl font-semibold mb-2">Fast & Responsive</h3>
+        <p class="text-gray-600 dark:text-gray-400">
+          Get quick responses with our optimized desktop application.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

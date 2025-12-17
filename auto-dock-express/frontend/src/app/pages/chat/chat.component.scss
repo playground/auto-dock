@@ -1,0 +1,55 @@
+// Component-specific styles
+// Most styling is handled by Tailwind CSS utility classes
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Custom scrollbar for message container
+.overflow-y-auto {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-600;
+  }
+}
+
+// Animation for new messages
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+app-message-bubble {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Sidebar transition
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Prevent content overflow when sidebar is collapsed
+.w-0 {
+  overflow: hidden;
+}
+
+// Made with Bob

@@ -1,0 +1,96 @@
+// Component-specific styles
+// Most styling is handled by Tailwind CSS utility classes
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Add subtle transition effects for theme changes
+.bg-white, .bg-gray-800, .text-gray-800, .text-gray-200, .border-gray-300, .border-gray-600 {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+// Redirect message banner styles
+.redirect-message-banner {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
+  animation: slideDown 0.3s ease-out;
+}
+
+// Dark mode support for redirect banner
+:host-context(.dark) .redirect-message-banner {
+  background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+  border-color: #d97706;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.2);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.redirect-message-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.warning-icon {
+  width: 24px;
+  height: 24px;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+:host-context(.dark) .warning-icon {
+  color: #fbbf24;
+}
+
+.redirect-message-text {
+  flex: 1;
+  color: #92400e;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+:host-context(.dark) .redirect-message-text {
+  color: #fef3c7;
+}
+
+.dismiss-button {
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: #92400e;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+}
+
+:host-context(.dark) .dismiss-button {
+  color: #fef3c7;
+}
+
+// Made with Bob

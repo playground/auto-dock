@@ -1,0 +1,103 @@
+<!-- MCP Server Menu Button -->
+<div class="mcp-menu-container">
+  <button class="mcp-menu-button" (click)="toggleMenu()" [class.active]="isOpen" title="MCP Servers">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+      <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+      <line x1="6" y1="6" x2="6.01" y2="6"></line>
+      <line x1="6" y1="18" x2="6.01" y2="18"></line>
+    </svg>
+    <span class="server-count" *ngIf="servers.length > 0">{{ servers.length }}</span>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div class="mcp-menu-dropdown" *ngIf="isOpen" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="menu-header">
+      <h3>Manage connectors</h3>
+      <div class="header-actions">
+        <span class="status-summary">{{ connectedServers }}/{{ totalServers }} connected</span>
+        <button class="refresh-btn" (click)="refreshStatus()" [disabled]="isRefreshing" title="Refresh status">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="isRefreshing">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Add Connectors Button -->
+    <button class="add-connectors-button" (click)="navigateToSettings()">
+      <span class="plus-icon">+</span>
+      <span>Add connectors</span>
+    </button>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner-container">
+        <app-loading-spinner size="sm"></app-loading-spinner>
+        <span class="loading-text">Loading server status...</span>
+      </div>
+    </div>
+
+    <!-- Server List -->
+    <div class="server-list" *ngIf="!isLoading && servers.length > 0">
+      <div class="server-item" *ngFor="let server of servers">
+        <!-- Server Header -->
+        <div class="server-header">
+          <div class="server-info">
+            <span class="server-icon">{{ getStatusIcon(server.connected) }}</span>
+            <span class="server-name">{{ server.name }}</span>
+          </div>
+          <div class="server-actions">
+            <span class="tool-count" *ngIf="server.toolCount > 0">{{ server.toolCount }} tools</span>
+            <button 
+              class="expand-button" 
+              (click)="toggleServerExpansion(server.name)"
+              *ngIf="server.tools && server.tools.length > 0"
+              [class.expanded]="isServerExpanded(server.name)"
+              title="Show tools"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Server Status -->
+        <div class="server-status" [class.connected]="server.connected">
+          {{ getStatusText(server.connected) }}
+        </div>
+
+        <!-- Error Message -->
+        <div class="server-error" *ngIf="server.error">
+          ⚠️ {{ server.error }}
+        </div>
+
+        <!-- Tools List (Expanded) -->
+        <div class="tools-list" *ngIf="isServerExpanded(server.name) && server.tools && server.tools.length > 0">
+          <div class="tool-item" *ngFor="let tool of server.tools">
+            <div class="tool-icon">🔧</div>
+            <div class="tool-info">
+              <div class="tool-name">{{ tool.name }}</div>
+              <div class="tool-description" *ngIf="tool.description">{{ tool.description }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && servers.length === 0">
+      <p>No MCP servers configured</p>
+      <button class="configure-button" (click)="navigateToSettings()">
+        Configure Servers
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div class="menu-backdrop" *ngIf="isOpen" (click)="closeMenu()"></div>

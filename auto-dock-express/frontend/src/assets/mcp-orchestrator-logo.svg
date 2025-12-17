@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#3B82F6" opacity="0.1"/>
+  
+  <!-- Central orchestrator node (larger) -->
+  <circle cx="100" cy="100" r="20" fill="#3B82F6" stroke="#1E40AF" stroke-width="3"/>
+  <text x="100" cy="105" text-anchor="middle" fill="white" font-size="16" font-weight="bold">O</text>
+  
+  <!-- Outer MCP server nodes -->
+  <!-- Top node -->
+  <circle cx="100" cy="40" r="15" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="100" cy="45" text-anchor="middle" fill="white" font-size="12" font-weight="bold">M</text>
+  
+  <!-- Top-right node -->
+  <circle cx="152" cy="65" r="15" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="152" cy="70" text-anchor="middle" fill="white" font-size="12" font-weight="bold">C</text>
+  
+  <!-- Bottom-right node -->
+  <circle cx="152" cy="135" r="15" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="152" cy="140" text-anchor="middle" fill="white" font-size="12" font-weight="bold">P</text>
+  
+  <!-- Bottom node -->
+  <circle cx="100" cy="160" r="15" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="100" cy="165" text-anchor="middle" fill="white" font-size="12" font-weight="bold">S</text>
+  
+  <!-- Bottom-left node -->
+  <circle cx="48" cy="135" r="15" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="48" cy="140" text-anchor="middle" fill="white" font-size="12" font-weight="bold">1</text>
+  
+  <!-- Top-left node -->
+  <circle cx="48" cy="65" r="15" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="48" cy="70" text-anchor="middle" fill="white" font-size="12" font-weight="bold">2</text>
+  
+  <!-- Connection lines from orchestrator to nodes -->
+  <line x1="100" y1="80" x2="100" y2="55" stroke="#3B82F6" stroke-width="2" opacity="0.6"/>
+  <line x1="115" y1="88" x2="137" y2="73" stroke="#3B82F6" stroke-width="2" opacity="0.6"/>
+  <line x1="115" y1="112" x2="137" y2="127" stroke="#3B82F6" stroke-width="2" opacity="0.6"/>
+  <line x1="100" y1="120" x2="100" y2="145" stroke="#3B82F6" stroke-width="2" opacity="0.6"/>
+  <line x1="85" y1="112" x2="63" y2="127" stroke="#3B82F6" stroke-width="2" opacity="0.6"/>
+  <line x1="85" y1="88" x2="63" y2="73" stroke="#3B82F6" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Animated pulse effect -->
+  <circle cx="100" cy="100" r="20" fill="none" stroke="#3B82F6" stroke-width="2" opacity="0.3">
+    <animate attributeName="r" from="20" to="35" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

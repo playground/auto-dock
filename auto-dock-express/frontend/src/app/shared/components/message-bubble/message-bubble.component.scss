@@ -1,0 +1,66 @@
+// Component-specific styles
+// Most styling is handled by Tailwind CSS utility classes
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.message-container {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+// Style for code blocks within messages
+:host ::ng-deep {
+  pre {
+    @apply bg-gray-100 dark:bg-gray-900 p-3 rounded-md overflow-x-auto my-2;
+    max-width: 100%;
+  }
+  
+  code {
+    @apply font-mono text-sm bg-gray-100 dark:bg-gray-900 px-1 py-0.5 rounded;
+    word-break: break-all;
+  }
+  
+  pre code {
+    @apply bg-transparent p-0;
+  }
+  
+  // Style for tables in markdown
+  table {
+    @apply border-collapse border border-gray-300 dark:border-gray-700 my-2;
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+    
+    th, td {
+      @apply border border-gray-300 dark:border-gray-700 px-2 py-1;
+      word-wrap: break-word;
+    }
+    
+    th {
+      @apply bg-gray-100 dark:bg-gray-800;
+    }
+  }
+  
+  // Style for links in markdown
+  a {
+    @apply text-primary-600 dark:text-primary-400 hover:underline;
+    word-break: break-all;
+  }
+  
+  // Style for blockquotes in markdown
+  blockquote {
+    @apply border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-2;
+  }
+  
+  // Ensure all text content wraps
+  p, div, span {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// Made with Bob

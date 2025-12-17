@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.tool-execution-container {
+  font-size: 0.875rem;
+}
+
+.tool-header {
+  user-select: none;
+}
+
+.tool-details {
+  transition: max-height 0.3s ease-in-out;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
+
+// Made with Bob

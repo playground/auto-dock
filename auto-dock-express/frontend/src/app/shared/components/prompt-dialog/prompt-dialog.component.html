@@ -1,0 +1,41 @@
+<div class="dialog-overlay" *ngIf="isOpen && prompt" (click)="onBackdropClick($event)">
+  <div class="dialog-container">
+    <div class="dialog-header">
+      <h2>Enter prompt inputs</h2>
+      <button class="close-button" (click)="onCancel()" aria-label="Close">×</button>
+    </div>
+
+    <div class="dialog-content">
+      <div class="prompt-info">
+        <h3>{{ prompt.name }}</h3>
+        <p class="prompt-description">{{ prompt.description }}</p>
+      </div>
+
+      <form class="prompt-form" (ngSubmit)="onSubmit()">
+        <div class="form-group" *ngFor="let arg of prompt.arguments">
+          <label [for]="arg.name">
+            {{ arg.name }}<span class="required" *ngIf="arg.required">*</span>
+          </label>
+          <textarea
+            [id]="arg.name"
+            [name]="arg.name"
+            [(ngModel)]="promptArguments[arg.name]"
+            [placeholder]="arg.description || ''"
+            [required]="arg.required || false"
+            rows="3"
+          ></textarea>
+          <small class="help-text" *ngIf="arg.description">{{ arg.description }}</small>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-secondary" (click)="onCancel()">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="!isValid()">
+            Add prompt
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

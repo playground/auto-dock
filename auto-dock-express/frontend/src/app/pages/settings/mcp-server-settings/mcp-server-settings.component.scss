@@ -1,0 +1,27 @@
+// Component-specific styles
+// Most styling is handled by Tailwind CSS utility classes
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Style for range input
+input[type="range"] {
+  @apply h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer;
+  
+  &::-webkit-slider-thumb {
+    @apply appearance-none w-4 h-4 bg-primary-600 rounded-full;
+  }
+  
+  &::-moz-range-thumb {
+    @apply w-4 h-4 bg-primary-600 border-0 rounded-full;
+  }
+}
+
+// Rotation animation for toggle button icon
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+// Made with Bob
