@@ -15,6 +15,7 @@ yarn-error.log
 .env
 .env.local
 .env.*.local
+.secrets.baseline
 
 # IDEs and editors
 .idea/
