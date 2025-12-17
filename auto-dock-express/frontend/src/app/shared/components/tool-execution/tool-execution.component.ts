@@ -1,8 +1,11 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ToolExecution } from '../../../core/services/chat.service';
 
 @Component({
   selector: 'app-tool-execution',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './tool-execution.component.html',
   styleUrls: ['./tool-execution.component.scss']
 })

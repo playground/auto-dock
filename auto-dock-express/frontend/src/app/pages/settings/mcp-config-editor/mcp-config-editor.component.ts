@@ -1,10 +1,14 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { IndexedDBService } from '../../../core/services/indexed-db.service';
 import { McpDiscoveryService } from '../../../core/services/mcp-discovery.service';
 import { McpConfiguration, EXAMPLE_MCP_CONFIG } from '../../../core/models/mcp-config.model';
 
 @Component({
   selector: 'app-mcp-config-editor',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './mcp-config-editor.component.html',
   styleUrls: ['./mcp-config-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

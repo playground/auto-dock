@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { ChatComponent } from './chat.component';
 import { PromptDialogComponent } from '../../shared/components/prompt-dialog/prompt-dialog.component';
 
@@ -13,14 +13,11 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    ChatComponent
-  ],
-  imports: [
-    SharedModule,
+    imports: [
     RouterModule.forChild(routes),
-    PromptDialogComponent
-  ]
+    PromptDialogComponent,
+    ChatComponent
+]
 })
 export class ChatModule { }
 

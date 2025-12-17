@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MCPServerConfig, MCPSettings, MCPServerType } from '../../../core/models/mcp-settings.model';
@@ -9,6 +10,8 @@ import { McpDiscoveryService } from '../../../core/services/mcp-discovery.servic
 
 @Component({
   selector: 'app-mcp-server-settings',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './mcp-server-settings.component.html',
   styleUrls: ['./mcp-server-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

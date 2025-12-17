@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'timeAgo',
+  standalone: true,
   pure: false // Impure pipe to update automatically
 })
 export class TimeAgoPipe implements PipeTransform {

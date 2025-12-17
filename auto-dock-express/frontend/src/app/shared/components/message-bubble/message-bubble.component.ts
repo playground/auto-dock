@@ -1,8 +1,19 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Message } from '../../../core/services/chat.service';
+import { ToolExecutionComponent } from '../tool-execution/tool-execution.component';
+import { MarkdownPipe } from '../../pipes/markdown.pipe';
 
 @Component({
   selector: 'app-message-bubble',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ToolExecutionComponent,
+    MarkdownPipe
+  ],
   templateUrl: './message-bubble.component.html',
   styleUrls: ['./message-bubble.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

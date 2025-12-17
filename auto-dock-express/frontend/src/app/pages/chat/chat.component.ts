@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChatService, Conversation, Message } from '../../core/services/chat.service';
@@ -7,9 +8,27 @@ import { McpDiscoveryService } from '../../core/services/mcp-discovery.service';
 import { IndexedDBService } from '../../core/services/indexed-db.service';
 import { BackendAgentService } from '../../core/services/backend-agent.service';
 import { MCPPrompt } from '../../core/models/mcp-prompt.model';
+import { MessageBubbleComponent } from '../../shared/components/message-bubble/message-bubble.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
+import { McpServerMenuComponent } from '../../shared/components/mcp-server-menu/mcp-server-menu.component';
+import { PromptDialogComponent } from '../../shared/components/prompt-dialog/prompt-dialog.component';
+import { ToolExecutionComponent } from '../../shared/components/tool-execution/tool-execution.component';
+import { MarkdownPipe } from '../../shared/pipes/markdown.pipe';
+import { TimeAgoPipe } from '../../shared/pipes/time-ago.pipe';
+import { ClickOutsideDirective } from '../../shared/directives/click-outside.directive';
 
 @Component({
   selector: 'app-chat',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MessageBubbleComponent,
+    LoadingSpinnerComponent,
+    McpServerMenuComponent,
+    PromptDialogComponent,
+    TimeAgoPipe
+],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

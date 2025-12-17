@@ -1,12 +1,22 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService, Theme } from '../../core/services/theme.service';
+import { McpConfigEditorComponent } from './mcp-config-editor/mcp-config-editor.component';
+import { MCPServerSettingsComponent } from './mcp-server-settings/mcp-server-settings.component';
 
 @Component({
   selector: 'app-settings',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    McpConfigEditorComponent,
+    MCPServerSettingsComponent
+  ],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,10 +1,14 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { McpDiscoveryService } from '../../../core/services/mcp-discovery.service';
 import { McpServerStatus } from '../../../core/models/mcp-config.model';
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mcp-server-menu',
+  standalone: true,
+  imports: [CommonModule, LoadingSpinnerComponent],
   templateUrl: './mcp-server-menu.component.html',
   styleUrls: ['./mcp-server-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
