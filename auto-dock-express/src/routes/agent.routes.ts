@@ -7,6 +7,7 @@ import { Router, Request, Response } from 'express';
 import { AgentService } from '../services/agent.service';
 import { QueryRequest, ErrorResponse, AIProviderConfig, MCPServerConfig } from '../types';
 import { AIServiceFactory } from '../services/ai/ai-service.factory';
+import { OllamaAIService } from '../services/ai/ollama-ai.service';
 import { logger } from '../utils/logger';
 import { ParsedMcpServer } from '../types/mcp-config.types';
 
@@ -468,6 +469,39 @@ export function createAgentRoutes(fallbackMcpServers: MCPServerConfig[]): Router
       const errorResponse: ErrorResponse = {
         error: 'Internal Server Error',
         message: error instanceof Error ? error.message : 'Unknown error',
+        statusCode: 500,
+        timestamp: new Date().toISOString()
+      };
+      
+      res.status(500).json(errorResponse);
+    }
+  });
+  
+  /**
+   * GET /api/agent/ollama-models
+   * Get available Ollama models from the local instance
+   */
+  router.get('/ollama-models', async (req: Request, res: Response): Promise<void> => {
+    try {
+      const baseURL = (req.query.baseURL as string) || 'http://localhost:11434';
+      logger.info(`Fetching available Ollama models from ${baseURL}`);
+      
+      const models = await OllamaAIService.fetchAvailableModels(baseURL);
+      
+      res.json({
+        models: models.map(name => ({
+          value: name,
+          label: name,
+          description: `Ollama model: ${name}`
+        })),
+        baseURL
+      });
+    } catch (error) {
+      logger.error('Error fetching Ollama models:', error);
+      
+      const errorResponse: ErrorResponse = {
+        error: 'Internal Server Error',
+        message: error instanceof Error ? error.message : 'Failed to fetch Ollama models',
         statusCode: 500,
         timestamp: new Date().toISOString()
       };

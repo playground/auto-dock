@@ -11,7 +11,7 @@ import { McpConfiguration } from '../models/mcp-config.model';
 import { MCPPrompt, MCPPromptResult, PromptExecutionRequest } from '../models/mcp-prompt.model';
 
 export interface CredentialsRequest {
-  provider: 'claude' | 'openai' | 'bedrock' | 'custom';
+  provider: 'claude' | 'openai' | 'bedrock' | 'custom' | 'ollama';
   apiKey?: string;
   model?: string;
   maxTokens?: number;
@@ -20,7 +20,7 @@ export interface CredentialsRequest {
   region?: string;
   accessKeyId?: string;
   secretAccessKey?: string;
-  // OpenAI/Custom specific
+  // OpenAI/Custom/Ollama specific
   baseURL?: string;
 }
 
@@ -161,6 +161,17 @@ export class BackendAgentService {
     return this.http.post<MCPPromptResult>(
       `${this.apiUrl}/agent/prompts/${request.server}/${request.promptName}`,
       { arguments: request.arguments },
+      { withCredentials: true }
+    );
+  }
+
+  /**
+   * Get available Ollama models from the local instance
+   */
+  getOllamaModels(baseURL?: string): Observable<{ models: Array<{ value: string; label: string; description: string }>; baseURL: string }> {
+    const url = baseURL ? `${this.apiUrl}/agent/ollama-models?baseURL=${encodeURIComponent(baseURL)}` : `${this.apiUrl}/agent/ollama-models`;
+    return this.http.get<{ models: Array<{ value: string; label: string; description: string }>; baseURL: string }>(
+      url,
       { withCredentials: true }
     );
   }

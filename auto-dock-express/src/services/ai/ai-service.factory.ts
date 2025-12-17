@@ -8,6 +8,7 @@ import { ClaudeAIService } from './claude-ai.service';
 import { OpenAIAIService } from './openai-ai.service';
 import { BedrockAIService } from './bedrock-ai.service';
 import { BobAIService } from './bob-ai.service';
+import { OllamaAIService } from './ollama-ai.service';
 import { logger } from '../../utils/logger';
 
 export class AIServiceFactory {
@@ -53,6 +54,15 @@ export class AIServiceFactory {
           config.model,
           config.maxTokens,
           config.temperature
+        );
+      
+      case 'ollama':
+        // Ollama uses local models with OpenAI-compatible API
+        return new OllamaAIService(
+          config.model,
+          config.maxTokens,
+          config.temperature,
+          config.baseURL || 'http://localhost:11434/v1'
         );
       
       case 'custom':
@@ -119,6 +129,14 @@ export class AIServiceFactory {
         config.temperature = parseFloat(process.env.BOB_TEMPERATURE || '0.7');
         break;
       
+      case 'ollama':
+        config.model = process.env.OLLAMA_MODEL || 'llama2';
+        config.baseURL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434/v1';
+        config.maxTokens = parseInt(process.env.OLLAMA_MAX_TOKENS || '4096');
+        config.temperature = parseFloat(process.env.OLLAMA_TEMPERATURE || '0.7');
+        config.apiKey = 'ollama'; // Placeholder, not used
+        break;
+      
       case 'custom':
         config.apiKey = process.env.CUSTOM_AI_API_KEY || '';
         config.model = process.env.CUSTOM_AI_MODEL || 'custom-model';
@@ -128,7 +146,7 @@ export class AIServiceFactory {
         break;
     }
     
-    if (!config.apiKey && provider !== 'custom' && provider !== 'bedrock' && provider !== 'bob') {
+    if (!config.apiKey && provider !== 'custom' && provider !== 'bedrock' && provider !== 'bob' && provider !== 'ollama') {
       throw new Error(`API key not configured for provider: ${provider}`);
     }
     

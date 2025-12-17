@@ -54,6 +54,7 @@
         <option value="claude">Claude (Anthropic)</option>
         <option value="openai">OpenAI</option>
         <option value="bedrock">AWS Bedrock</option>
+        <option value="ollama">Ollama (Local)</option>
         <option value="custom">Custom (OpenAI-compatible)</option>
       </select>
     </div>
@@ -128,6 +129,34 @@
       </p>
     </div>
     
+    <!-- Ollama Base URL -->
+    <div *ngIf="credentialsForm.get('provider')?.value === 'ollama'">
+      <label for="baseURL" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Ollama Base URL (optional)
+      </label>
+      <div class="flex gap-2">
+        <input
+          id="baseURL"
+          formControlName="baseURL"
+          type="text"
+          placeholder="http://localhost:11434"
+          class="flex-1 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+        <button
+          type="button"
+          (click)="fetchOllamaModels()"
+          [disabled]="loadingOllamaModels"
+          class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          {{ loadingOllamaModels ? 'Loading...' : 'Refresh Models' }}
+        </button>
+      </div>
+      <p *ngIf="ollamaModelsError" class="mt-1 text-sm text-red-600 dark:text-red-400">
+        {{ ollamaModelsError }}
+      </p>
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        Default: http://localhost:11434. Make sure Ollama is running locally.
+      </p>
+    </div>
+    
     <!-- Custom Provider Base URL -->
     <div *ngIf="credentialsForm.get('provider')?.value === 'custom'">
       <label for="baseURL" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Base URL</label>
@@ -141,14 +170,20 @@
     
     <!-- Model Selection -->
     <div>
-      <label for="model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Model</label>
+      <label for="model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Model
+        <span *ngIf="credentialsForm.get('provider')?.value === 'ollama' && loadingOllamaModels" class="text-xs text-gray-500">
+          (Loading available models...)
+        </span>
+      </label>
       
       <!-- Dropdown for predefined models -->
       <select
         *ngIf="availableModels.length > 0"
         id="model"
         formControlName="model"
-        class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+        [disabled]="credentialsForm.get('provider')?.value === 'ollama' && loadingOllamaModels"
+        class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
         <option *ngFor="let model of availableModels" [value]="model.value">
           {{ model.label }}{{ model.description ? ' - ' + model.description : '' }}
         </option>

@@ -42,7 +42,9 @@ export class MCPServerSettingsComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   
   // Model definitions
-  private readonly modelsByProvider = {
+  private modelsByProvider: {
+    [key: string]: Array<{ value: string; label: string; description?: string }>;
+  } = {
     bob: [
       { value: 'claude-3-7-sonnet-20250219', label: 'Claude 3.7 Sonnet', description: 'Latest & most capable (200K tokens)' },
       { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet', description: 'Excellent for complex tasks' },
@@ -67,8 +69,13 @@ export class MCPServerSettingsComponent implements OnInit, OnDestroy {
       { value: 'us.anthropic.claude-3-sonnet-20240229-v1:0', label: 'Claude 3 Sonnet', description: 'Balanced' },
       { value: 'us.anthropic.claude-3-haiku-20240307-v1:0', label: 'Claude 3 Haiku', description: 'Fastest, cheapest' }
     ],
+    ollama: [],
     custom: []
   };
+  
+  // State for Ollama models
+  loadingOllamaModels = false;
+  ollamaModelsError: string | null = null;
   
   constructor(
     private fb: FormBuilder,
@@ -251,9 +258,18 @@ export class MCPServerSettingsComponent implements OnInit, OnDestroy {
         this.updateAvailableModels(provider);
         // Load saved credentials for this provider if available
         this.loadProviderCredentials(provider);
+        // Fetch Ollama models if Ollama is selected
+        if (provider === 'ollama') {
+          this.fetchOllamaModels();
+        }
         this.cdr.markForCheck();
       })
     );
+    
+    // Fetch Ollama models if Ollama is the initial provider
+    if (savedCredentials?.provider === 'ollama') {
+      this.fetchOllamaModels();
+    }
   }
   
   private loadCredentialsFromSession(): CredentialsRequest | null {
@@ -341,6 +357,38 @@ export class MCPServerSettingsComponent implements OnInit, OnDestroy {
     }
   }
   
+  /**
+   * Fetch available Ollama models from the backend
+   */
+  fetchOllamaModels(): void {
+    this.loadingOllamaModels = true;
+    this.ollamaModelsError = null;
+    
+    const baseURL = this.credentialsForm.get('baseURL')?.value || 'http://localhost:11434';
+    
+    this.backendAgent.getOllamaModels(baseURL).subscribe({
+      next: (response) => {
+        this.loadingOllamaModels = false;
+        this.modelsByProvider['ollama'] = response.models;
+        this.availableModels = response.models;
+        
+        // Set first model as default if no model is selected
+        const currentModel = this.credentialsForm.get('model')?.value;
+        if (response.models.length > 0 && !currentModel) {
+          this.credentialsForm.patchValue({ model: response.models[0].value });
+        }
+        
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.loadingOllamaModels = false;
+        this.ollamaModelsError = 'Failed to fetch Ollama models. Make sure Ollama is running.';
+        console.error('Error fetching Ollama models:', err);
+        this.cdr.markForCheck();
+      }
+    });
+  }
+  
   updateCredentialValidators(provider: string): void {
     const apiKeyControl = this.credentialsForm.get('apiKey');
     const accessKeyControl = this.credentialsForm.get('accessKeyId');
@@ -359,6 +407,9 @@ export class MCPServerSettingsComponent implements OnInit, OnDestroy {
     } else if (provider === 'bedrock') {
       accessKeyControl?.setValidators([Validators.required]);
       secretKeyControl?.setValidators([Validators.required]);
+    } else if (provider === 'ollama') {
+      // Ollama doesn't require API key, but baseURL is optional
+      baseURLControl?.clearValidators();
     } else if (provider === 'custom') {
       apiKeyControl?.setValidators([Validators.required]);
       baseURLControl?.setValidators([Validators.required]);
@@ -521,6 +572,7 @@ export class MCPServerSettingsComponent implements OnInit, OnDestroy {
       'claude': 'Claude',
       'openai': 'OpenAI',
       'bedrock': 'Bedrock',
+      'ollama': 'Ollama',
       'custom': 'Custom'
     };
     return names[provider] || provider;

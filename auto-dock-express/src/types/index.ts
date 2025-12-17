@@ -7,7 +7,7 @@
 // AI Provider Types
 // ============================================================================
 
-export type AIProvider = 'claude' | 'openai' | 'bedrock' | 'custom' | 'bob';
+export type AIProvider = 'claude' | 'openai' | 'bedrock' | 'custom' | 'bob' | 'ollama';
 
 export interface AIProviderConfig {
   provider: AIProvider;
