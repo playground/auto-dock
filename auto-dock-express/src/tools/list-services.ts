@@ -6,20 +6,8 @@
 
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { executeHznCommand, formatJsonOutput } from './common';
-import { makeHttpRequest, getErrorMessage, getHeadersFromContext } from '../services/common';
-
-/**
- * Check if hzn CLI is available
- */
-async function isHznAvailable(): Promise<boolean> {
-  try {
-    await executeHznCommand('hzn version');
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
+import { executeHznCommand, formatJsonOutput, isHznAvailable } from './common';
+import { makeHttpRequest, getErrorMessage, getHeadersFromContext, callViaApi, setHznEnvironments } from '../services/common';
 
 /**
  * List services using Exchange API
@@ -89,10 +77,8 @@ Service names often include organization, name, version and architecture like "m
           // Build the command
           let command = 'hzn exchange service list';
           
-          // Add organization flag if provided
-          if (params.org) {
-            command += ` -o ${params.org}`;
-          }
+          // set the environment variables for the hzn CLI
+          setHznEnvironments(params, context);
           
           // Execute the command
           const output = await executeHznCommand(command);
@@ -115,7 +101,7 @@ Service names often include organization, name, version and architecture like "m
       }
       
       // Fallback to API call
-      return await listServicesViaApi(params, context);
+      return await callViaApi(params, context, 'services');
       
     } catch (error) {
       console.error(`Error listing services: ${error}`);

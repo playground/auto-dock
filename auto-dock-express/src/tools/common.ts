@@ -10,6 +10,18 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 /**
+ * Check if hzn CLI is available
+ */
+export async function isHznAvailable(): Promise<boolean> {
+  try {
+    await executeHznCommand('hzn version');
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
  * Execute an hzn CLI command and return the result
  * @param command The hzn command to execute
  * @returns The stdout from the command

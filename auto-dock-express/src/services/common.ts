@@ -22,8 +22,9 @@ export const PUBLIC_PEM = PUBLIC_PEM_BASE64
 
 console.log('Private key loaded:', PRIVATE_KEY ? 'Yes' : 'No');
 
-let headersPassthrough: any = {};
-
+export function getExchangeUserAuthToken(userAuth: string): string {
+  return atob(userAuth).match(/\/(.*)/)[1] || '';
+}
 export function getHeadersFromContext(params: any, context: any): Record<string, string> {
   // Access headers from the shared context
   const headers = context.requestInfo.headers || {};
@@ -37,8 +38,7 @@ export function getHeadersFromContext(params: any, context: any): Record<string,
     console.log('SSL certificate verification disabled (NODE_TLS_REJECT_UNAUTHORIZED=0)');
   }
 
-
-  headersPassthrough = {organization, url, credential};
+  const headersPassthrough: any = {organization, url, credential};
   headersPassthrough.Authorization = headers['Authorization'] || '';
 
   return headersPassthrough;
@@ -46,8 +46,7 @@ export function getHeadersFromContext(params: any, context: any): Record<string,
 
 export function getAuthorizationHeader(params: any, context: any): string {
   // Access headers from the shared context
-  getHeadersFromContext(params, context);
-  return headersPassthrough.Authorization || '';
+  return getHeadersFromContext(params, context).Authorization || '';
 }
 
 /**
@@ -573,6 +572,51 @@ export async function storeServicePublicKey(
     Authorization: `Basic ${credential}`,
     'Content-Type': 'text/plain' // Override the default application/json
   }, 'PUT');
+}
+
+/**
+ * calling Exchange API
+ */
+export async function callViaApi(params: any, context: any, path: string = ''): Promise<any> {
+  try {
+    const { url, credential, organization } = getHeadersFromContext(params, context);
+    
+    if (!url || !credential || !organization) {
+      throw new Error('Missing required Exchange configuration. Please set HZN_EXCHANGE_URL, HZN_ORG_ID, and HZN_EXCHANGE_USER_AUTH environment variables.');
+    }
+    
+    const exchangeUrl = `${url}/${organization}/${path}`;
+    
+    console.log(`Fetching services from Exchange API at ${exchangeUrl}`);
+    const response = await makeHttpRequest(exchangeUrl, {
+      Authorization: `Basic ${credential}`
+    });
+    
+    // If response has content property, it's already formatted as ToolResponse (error case)
+    if (response && typeof response === 'object' && 'content' in response) {
+      return response;
+    }
+    
+    // Otherwise, wrap the successful response in proper MCP format
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(response, null, 2)
+        }
+      ]
+    };
+  } catch (error) {
+    console.error(`Error listing services: ${error}`);
+    return getErrorMessage(error);
+  }
+}
+
+export function setHznEnvironments(params: any, context: any): void {
+  const { url, credential, organization } = getHeadersFromContext(params, context);
+  process.env.EXCHANGE_URL = url;
+  process.env.HZN_EXCHANGE_USER_AUTH = getExchangeUserAuthToken(credential);
+  process.env.EXCHANGE_ORG = organization;
 }
 
 // Made with Bob

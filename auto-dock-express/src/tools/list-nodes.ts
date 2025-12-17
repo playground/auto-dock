@@ -6,7 +6,8 @@
 
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { executeHznCommand, getErrorMessage, formatJsonOutput } from './common';
+import { executeHznCommand, getErrorMessage, formatJsonOutput, isHznAvailable } from './common';
+import { callViaApi, setHznEnvironments } from '../services/common';
 
 /**
  * Register the list-nodes tool with the MCP server
@@ -28,26 +29,41 @@ export function registerListNodesTool(server: McpServer) {
   
   const toolCallback = async (params: any, context: any): Promise<any> => {
     try {
-      // Build the command
-      let command = 'hzn exchange node list';
+      // Check if hzn CLI is available
+      const hznAvailable = await isHznAvailable();
       
-      // Add organization flag if provided
-      if (params.org) {
-        command += ` -o ${params.org}`;
+      if (hznAvailable) {
+        // Try using hzn CLI first
+        console.log('Using hzn CLI to list nodes');
+        try {
+        // Build the command
+        let command = 'hzn exchange node list';
+        
+        // set the environment variables for the hzn CLI
+        setHznEnvironments(params, context);
+        
+        // Execute the command
+        const output = await executeHznCommand(command);
+        
+        // Format and return the output
+        return {
+          content: [
+            {
+              type: 'text',
+              text: formatJsonOutput(output)
+            }
+          ]
+        };
+        } catch (cliError) {
+          console.warn('hzn CLI failed, falling back to API:', cliError);
+          // Fall through to API fallback
+        }
+      } else {
+        console.log('hzn CLI not available, using Exchange API');
       }
       
-      // Execute the command
-      const output = await executeHznCommand(command);
-      
-      // Format and return the output
-      return {
-        content: [
-          {
-            type: 'text',
-            text: formatJsonOutput(output)
-          }
-        ]
-      };
+      // Fallback to API call
+      return await callViaApi(params, context, 'nodes');
     } catch (error) {
       console.error(`Error listing nodes: ${error}`);
       return getErrorMessage(error);
