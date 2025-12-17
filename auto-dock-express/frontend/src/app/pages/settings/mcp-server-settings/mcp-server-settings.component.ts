@@ -307,21 +307,65 @@ export class MCPServerSettingsComponent implements OnInit, OnDestroy {
   
   private saveCredentialsToSession(credentials: CredentialsRequest): void {
     try {
+      // Clean credentials before saving
+      const cleanedCredentials = this.cleanCredentials(credentials);
+      
       // Save to the provider-specific map
-      this.savedProviderCredentials.set(credentials.provider, credentials);
+      this.savedProviderCredentials.set(cleanedCredentials.provider, cleanedCredentials);
       
       // Save all credentials as array
       const credentialsArray = Array.from(this.savedProviderCredentials.values());
       sessionStorage.setItem('bob_credentials_all', JSON.stringify(credentialsArray));
       
       // Save as last used
-      sessionStorage.setItem('bob_credentials_last', JSON.stringify(credentials));
+      sessionStorage.setItem('bob_credentials_last', JSON.stringify(cleanedCredentials));
       
       // Keep backward compatibility
-      sessionStorage.setItem('bob_credentials', JSON.stringify(credentials));
+      sessionStorage.setItem('bob_credentials', JSON.stringify(cleanedCredentials));
     } catch (error) {
       console.error('Error saving credentials to session:', error);
     }
+  }
+  
+  /**
+   * Clean credentials by removing unused fields based on provider
+   */
+  private cleanCredentials(credentials: CredentialsRequest): CredentialsRequest {
+    const cleaned: CredentialsRequest = {
+      provider: credentials.provider,
+      model: credentials.model,
+      maxTokens: credentials.maxTokens,
+      temperature: credentials.temperature
+    };
+    
+    // Add provider-specific fields only
+    switch (credentials.provider) {
+      case 'bob':
+      case 'claude':
+      case 'openai':
+        cleaned.apiKey = credentials.apiKey;
+        break;
+      
+      case 'bedrock':
+        cleaned.region = credentials.region;
+        cleaned.accessKeyId = credentials.accessKeyId;
+        cleaned.secretAccessKey = credentials.secretAccessKey;
+        break;
+      
+      case 'ollama':
+        // Only include baseURL if it's not the default
+        if (credentials.baseURL && credentials.baseURL !== 'http://localhost:11434') {
+          cleaned.baseURL = credentials.baseURL;
+        }
+        break;
+      
+      case 'custom':
+        cleaned.apiKey = credentials.apiKey;
+        cleaned.baseURL = credentials.baseURL;
+        break;
+    }
+    
+    return cleaned;
   }
   
   /**

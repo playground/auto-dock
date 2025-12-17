@@ -20,7 +20,7 @@ export function registerAdminStatusTool(server: McpServer) {
   
   const toolSchema = {};
   
-  const toolCallback = async (params: any, context: any): Promise<any> => {
+  const toolCallback = async (params, context): Promise<any> => {
     try {
       // Execute the command
       const output = await executeHznCommand('hzn node management status');
@@ -53,12 +53,14 @@ export function registerAdminStatusTool(server: McpServer) {
     }
   };
   
-  server.tool(
+  server.registerTool(
     toolName,
-    toolDescription,
-    toolSchema,
+    {
+      description: toolDescription,
+      inputSchema: toolSchema
+    },
     toolCallback
   );
-}
+} 
 
 // Made with Bob

@@ -1,5 +1,6 @@
 import { IncomingHttpHeaders } from 'http';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { registerAddDeploymentPolicyTool } from './tools/add-deployment-policy'
 
 /**
  * Factory to create and configure a new McpServer (tools/resources/prompts)
@@ -19,9 +20,9 @@ export function createMcpServer(initialHeaders: IncomingHttpHeaders): McpServer 
     {
       // Declare that this server supports tools, resources, and prompts
       capabilities: {
-        tools:     {},
-        resources: {},
-        prompts:   {}
+        tools:     { listChanged: true },
+        resources: { listChanged: true },
+        prompts:   { listChanged: true }
       }
     }
   );
@@ -31,6 +32,9 @@ export function createMcpServer(initialHeaders: IncomingHttpHeaders): McpServer 
   // registerDeviceTools(server);
   // registerInterfaceTools(server);
   // registerPolicyTools(server);
+
+  // Register the add-deployment-policy tool
+  registerAddDeploymentPolicyTool(server);
   
   console.log('MCP server instance created successfully');
   return server;

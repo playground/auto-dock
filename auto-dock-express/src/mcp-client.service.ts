@@ -3,8 +3,8 @@
  * Handles communication with MCP servers (both HTTP/SSE and stdio)
  */
 
-import { MCPServerConfig, MCPTool, MCPClientResponse, MCPPrompt, MCPPromptResult } from '../types';
-import { logger } from '../utils/logger';
+import { MCPServerConfig, MCPTool, MCPClientResponse, MCPPrompt, MCPPromptResult } from './types';
+import { logger } from './utils/logger';
 
 // Import MCP SDK
 const { Client } = require('@modelcontextprotocol/sdk/client/index.js');

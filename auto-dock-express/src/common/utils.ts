@@ -83,9 +83,11 @@ export class Utils {
     }
   }
   resetTimer() {
-    clearInterval(this.timer);
+    if (this.timer) {
+      clearInterval(this.timer as NodeJS.Timeout);
+    }
     this.timer = null;
-    this.setInterval(this.intervalMS);  
+    this.setInterval(this.intervalMS);
   }
   setInterval(ms) {
     this.timer = setInterval(async () => {
@@ -126,7 +128,9 @@ export class Utils {
     }, ms);
   }
   doRun() {
-    clearInterval(this.timer);
+    if (this.timer) {
+      clearInterval(this.timer as NodeJS.Timeout);
+    }
     this.runTasks()
     .subscribe({
       complete: () => {

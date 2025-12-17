@@ -45,11 +45,13 @@ export function registerAddDeploymentPolicyTool(server: McpServer) {
       return getErrorMessage(error);
     }
   };
-  
-  server.tool(
+
+  server.registerTool(
     toolName,
-    toolDescription,
-    toolSchema,
+    {
+      description: toolDescription,
+      inputSchema: toolSchema
+    },
     toolCallback
   );
 }

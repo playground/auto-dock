@@ -48,10 +48,12 @@ Agreements represent the contract between the node and the agbot for running ser
     }
   };
   
-  server.tool(
+  server.registerTool(
     toolName,
-    toolDescription,
-    toolSchema,
+    {
+      description: toolDescription,
+      inputSchema: toolSchema
+    },
     toolCallback
   );
 }

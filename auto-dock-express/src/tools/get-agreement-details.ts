@@ -70,10 +70,12 @@ export function registerGetAgreementDetailsTool(server: McpServer) {
     }
   };
   
-  server.tool(
+  server.registerTool(
     toolName,
-    toolDescription,
-    toolSchema,
+    {
+      description: toolDescription,
+      inputSchema: toolSchema
+    },
     toolCallback
   );
 }

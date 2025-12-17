@@ -53,10 +53,12 @@ Service names often include organization, name, version and architecture like "m
     }
   };
   
-  server.tool(
+  server.registerTool(
     toolName,
-    toolDescription,
-    toolSchema,
+    {
+      description: toolDescription,
+      inputSchema: toolSchema
+    },
     toolCallback
   );
 }

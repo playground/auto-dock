@@ -63,10 +63,12 @@ Example: myorg/myservice_1.0.0_amd64`;
     }
   };
   
-  server.tool(
+  server.registerTool(
     toolName,
-    toolDescription,
-    toolSchema,
+    {
+      description: toolDescription,
+      inputSchema: toolSchema
+    },
     toolCallback
   );
 }

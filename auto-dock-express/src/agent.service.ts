@@ -10,10 +10,10 @@ import {
   AITool,
   ToolExecution,
   MCPServerConfig
-} from '../types';
-import { IAIService } from '../types';
+} from './types';
+import { IAIService } from './types';
 import { mcpClientManager } from './mcp-client.service';
-import { logger } from '../utils/logger';
+import { logger } from './utils/logger';
 import { randomUUID } from 'crypto';
 import { SYSTEM_PROMPT } from './system-prompt';
 

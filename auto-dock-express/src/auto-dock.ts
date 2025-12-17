@@ -1,14 +1,12 @@
-import { Server } from './server';
+/**
+ * Auto-Dock Entry Point
+ * Delegates to server.ts for actual server initialization
+ */
 
-const argv: string = process.argv.slice(2).toString()
-const match = argv.match(/--port=/)
-const port = match ? parseInt(argv.replace(match[0], '')) : 8888;
+// Import and run the server
+import './server';
 
-export class Index {
-  server = new Server(port);
-  constructor() {
+// The server.ts file handles all initialization and startup
+// This file exists for backward compatibility with existing scripts
 
-  }
-}
-
-new Index()
+// Made with Bob

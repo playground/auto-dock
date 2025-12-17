@@ -11,7 +11,7 @@ import { McpConfiguration } from '../models/mcp-config.model';
 import { MCPPrompt, MCPPromptResult, PromptExecutionRequest } from '../models/mcp-prompt.model';
 
 export interface CredentialsRequest {
-  provider: 'claude' | 'openai' | 'bedrock' | 'custom' | 'ollama';
+  provider: 'bob' | 'claude' | 'openai' | 'bedrock' | 'custom' | 'ollama';
   apiKey?: string;
   model?: string;
   maxTokens?: number;
