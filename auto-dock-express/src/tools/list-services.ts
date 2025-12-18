@@ -83,6 +83,9 @@ Service names include organization, name, version and architecture like "myorg/m
   
   const toolCallback = async (params: any, context: any): Promise<any> => {
     try {
+      // set the environment variables for the hzn CLI
+      setHznEnvironments(params, context);
+          
       // Check if hzn CLI is available
       const hznAvailable = await isHznAvailable();
       
@@ -92,9 +95,6 @@ Service names include organization, name, version and architecture like "myorg/m
         try {
           // Build the command
           let command = 'hzn exchange service list';
-          
-          // set the environment variables for the hzn CLI
-          setHznEnvironments(params, context);
           
           // Execute the command
           const output = await executeHznCommand(command);

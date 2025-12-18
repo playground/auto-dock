@@ -214,25 +214,31 @@ export class AgentService {
   
   /**
    * Filter and prioritize tools for better selection with smaller models
-   * Prioritizes domain-specific tools (auto-dock) over generic API tools
+   * For Ollama: ONLY show auto-dock tools to reduce confusion
    */
   private filterAndPrioritizeTools(tools: Array<any>): Array<any> {
-    // Separate tools by server
-    const autoDockTools = tools.filter(t => t.server === 'auto-dock-mcp-server');
-    const otherTools = tools.filter(t => t.server !== 'auto-dock-mcp-server');
+    // Log all server names to debug
+    const uniqueServers = [...new Set(tools.map(t => t.server))];
+    logger.debug(`Unique server names: ${uniqueServers.join(', ')}`);
     
-    // List of generic tool names to exclude when auto-dock alternatives exist
-    const genericToolsToExclude = ['api-query', 'swagger-query', 'rest-api', 'http-request'];
+    // Get auto-dock tools (Open Horizon specific)
+    const autoDockTools = tools.filter(t =>
+      t.server === 'auto-dock-mcp-server' ||
+      t.server === 'open-horizon-mcp' ||
+      t.server === 'auto-dock' ||
+      t.server.includes('auto-dock') ||
+      t.server.includes('horizon')
+    );
     
-    // Filter out generic tools if we have auto-dock tools
-    const filteredOtherTools = autoDockTools.length > 0
-      ? otherTools.filter(t => !genericToolsToExclude.includes(t.name))
-      : otherTools;
+    // For Ollama, ONLY return auto-dock tools (aggressive filtering)
+    // This reduces tool count from 30 to ~18 for better selection
+    const result = autoDockTools;
     
-    // Return auto-dock tools first (higher priority), then other tools
-    const result = [...autoDockTools, ...filteredOtherTools];
-    
-    logger.debug(`Tool filtering: ${tools.length} total, ${autoDockTools.length} auto-dock, ${filteredOtherTools.length} other, ${tools.length - result.length} excluded`);
+    logger.info(`Tool filtering: ${tools.length} total → ${result.length} Open Horizon tools (${tools.length - result.length} excluded)`);
+    if (tools.length - result.length > 0) {
+      const excluded = tools.filter(t => !result.includes(t)).map(t => t.name);
+      logger.info(`Excluded tools: ${excluded.join(', ')}`);
+    }
     
     return result;
   }
