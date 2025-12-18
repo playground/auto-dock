@@ -52,14 +52,30 @@ async function listServicesViaApi(params: any, context: any): Promise<any> {
  */
 export function registerListServicesTool(server: McpServer) {
   const toolName = 'list-services';
-  const toolDescription = `Use this tool to list all services in the Open Horizon Exchange.
-This tool will attempt to use the 'hzn exchange service list' command if the hzn CLI is available.
-If the hzn CLI is not installed, it will fall back to making a direct API call to the Exchange.
+  const toolDescription = `[OPEN HORIZON] LIST SERVICES - PRIMARY TOOL for listing Open Horizon services.
+
+**ALWAYS use this tool first** when the user asks about Open Horizon services, workloads, or containers in the Exchange or Management Hub.
+
+This tool lists all SERVICES (not nodes/devices) in the Open Horizon Exchange/Management Hub.
+
+Use this tool when the user asks questions like:
+- "List services in the management hub"
+- "What services are available?"
+- "List all services"
+- "Show me the services"
+- "What workloads exist?"
+- "What containers can I deploy?"
+- "Show services in the Exchange"
+
+DO NOT use generic API query tools - this is the specialized Open Horizon tool.
+
+DO NOT use this tool for:
+- Listing nodes/devices (use list-nodes instead)
+- Listing deployment policies (use list-deployment-policies instead)
+- Listing agreements (use list-agreements instead)
 
 Returns a JSON object with service IDs as keys and service details as values.
-
-IMPORTANT: Service names are displayed in full and should never be truncated or simplified.
-Service names often include organization, name, version and architecture like "myorg/myservice_1.0.0_amd64".`;
+Service names include organization, name, version and architecture like "myorg/myservice_1.0.0_amd64".`;
   
   const toolSchema = {
     org: z.string().optional().describe('Organization ID. If not provided, uses the default organization from HZN_ORG_ID environment variable.'),

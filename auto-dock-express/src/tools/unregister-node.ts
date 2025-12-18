@@ -6,7 +6,8 @@
 
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { executeHznCommand, getErrorMessage, getSuccessMessage } from './common';
+import { executeHznCommand } from './common';
+import { getErrorMessage, getSuccessMessage } from '../services/common';
 
 /**
  * Register the unregister-node tool with the MCP server

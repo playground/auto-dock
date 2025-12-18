@@ -80,6 +80,21 @@ export function getErrorMessage(err: any): ToolResponse {
 }
 
 /**
+ * Format a success message for MCP tool response
+ * @param message The success message or data
+ * @returns Formatted success response
+ */
+export function getSuccessMessage(message: string): ToolResponse {
+  return {
+    content: [
+      {
+        type: 'text',
+        text: message
+      }
+    ]
+  };
+}
+/**
  * Makes an HTTP request to the specified URL with optional headers
  * @param url URL to make the request to
  * @param headers Optional headers to include in the request

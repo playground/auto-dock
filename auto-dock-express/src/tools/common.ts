@@ -43,41 +43,6 @@ export async function executeHznCommand(command: string): Promise<string> {
 }
 
 /**
- * Format an error message for MCP tool response
- * @param error The error object or message
- * @returns Formatted error response
- */
-export function getErrorMessage(error: any): any {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  
-  return {
-    content: [
-      {
-        type: 'text',
-        text: `Error: ${errorMessage}`
-      }
-    ],
-    isError: true
-  };
-}
-
-/**
- * Format a success message for MCP tool response
- * @param message The success message or data
- * @returns Formatted success response
- */
-export function getSuccessMessage(message: string): any {
-  return {
-    content: [
-      {
-        type: 'text',
-        text: message
-      }
-    ]
-  };
-}
-
-/**
  * Parse JSON output from hzn CLI command
  * @param output The command output
  * @returns Parsed JSON object or original string if not JSON

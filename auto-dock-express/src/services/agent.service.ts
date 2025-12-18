@@ -73,13 +73,26 @@ export class AgentService {
       
       // Get available tools from MCP servers
       const availableTools = mcpClientManager.getAllTools();
-      const aiTools: AITool[] = availableTools.map(tool => ({
+      
+      // Filter and prioritize tools for Ollama and other smaller models
+      // Bedrock/Claude handle tool selection well, so skip filtering for them
+      const shouldFilterTools = this.aiService.provider === 'ollama' || this.aiService.provider === 'openai';
+      const filteredTools = shouldFilterTools
+        ? this.filterAndPrioritizeTools(availableTools)
+        : availableTools;
+      
+      const aiTools: AITool[] = filteredTools.map(tool => ({
         name: tool.name,
         description: `${tool.description} (Server: ${tool.server})`,
         input_schema: tool.inputSchema
       }));
       
-      logger.info(`Available tools: ${aiTools.length}`);
+      if (shouldFilterTools && filteredTools.length < availableTools.length) {
+        logger.info(`Available tools: ${aiTools.length} (filtered from ${availableTools.length} for ${this.aiService.provider})`);
+      } else {
+        logger.info(`Available tools: ${aiTools.length}`);
+      }
+      logger.debug(`Tool names: ${aiTools.map(t => t.name).join(', ')}`);
       
       // Initial AI response
       let aiResponse = await this.aiService.chat(messages, aiTools);
@@ -197,6 +210,31 @@ export class AgentService {
   clearAllConversations(): void {
     this.conversationHistory.clear();
     logger.info(`Cleared all conversation histories`);
+  }
+  
+  /**
+   * Filter and prioritize tools for better selection with smaller models
+   * Prioritizes domain-specific tools (auto-dock) over generic API tools
+   */
+  private filterAndPrioritizeTools(tools: Array<any>): Array<any> {
+    // Separate tools by server
+    const autoDockTools = tools.filter(t => t.server === 'auto-dock-mcp-server');
+    const otherTools = tools.filter(t => t.server !== 'auto-dock-mcp-server');
+    
+    // List of generic tool names to exclude when auto-dock alternatives exist
+    const genericToolsToExclude = ['api-query', 'swagger-query', 'rest-api', 'http-request'];
+    
+    // Filter out generic tools if we have auto-dock tools
+    const filteredOtherTools = autoDockTools.length > 0
+      ? otherTools.filter(t => !genericToolsToExclude.includes(t.name))
+      : otherTools;
+    
+    // Return auto-dock tools first (higher priority), then other tools
+    const result = [...autoDockTools, ...filteredOtherTools];
+    
+    logger.debug(`Tool filtering: ${tools.length} total, ${autoDockTools.length} auto-dock, ${filteredOtherTools.length} other, ${tools.length - result.length} excluded`);
+    
+    return result;
   }
 }
 

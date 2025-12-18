@@ -6,23 +6,37 @@
 
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { executeHznCommand, getErrorMessage, formatJsonOutput, isHznAvailable } from './common';
-import { callViaApi, setHznEnvironments } from '../services/common';
+import { executeHznCommand, formatJsonOutput, isHznAvailable } from './common';
+import { callViaApi, getErrorMessage, setHznEnvironments } from '../services/common';
 
 /**
  * Register the list-nodes tool with the MCP server
  */
 export function registerListNodesTool(server: McpServer) {
   const toolName = 'list-nodes';
-  const toolDescription = `
-    Use this tool to list all registered nodes in the Open Horizon Exchange.
-    This executes the 'hzn exchange node list' command.
-    
-    Returns a JSON object with node IDs as keys and node details as values.
-    
-    IMPORTANT: Node names are displayed in full and should never be truncated or simplified.
-    Node names often include complex identifiers like "edge-device-001" or "witty-anoa".
-  `;
+  const toolDescription = `[OPEN HORIZON] LIST NODES - PRIMARY TOOL for listing Open Horizon nodes/devices.
+
+**ALWAYS use this tool first** when the user asks about Open Horizon nodes, devices, or edge devices.
+
+This tool lists all registered NODES/DEVICES (not services) in the Open Horizon Exchange/Management Hub.
+
+Use this tool when the user asks questions like:
+- "List nodes in the management hub"
+- "What nodes are registered?"
+- "List all nodes"
+- "Show me the devices"
+- "What edge devices exist?"
+- "Which nodes are available?"
+
+DO NOT use generic API query tools - this is the specialized Open Horizon tool.
+
+DO NOT use this tool for:
+- Listing services/workloads (use list-services instead)
+- Listing deployment policies (use list-deployment-policies instead)
+- Getting node status (use get-node-status instead)
+
+Returns a JSON object with node IDs as keys and node details as values.
+Node names include identifiers like "edge-device-001" or "witty-anoa".`;
   const toolSchema = {
     org: z.string().optional().describe('Organization ID. If not provided, uses the default organization from HZN_ORG_ID environment variable.'),
   };

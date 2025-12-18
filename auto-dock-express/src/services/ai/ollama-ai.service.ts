@@ -52,9 +52,14 @@ export class OllamaAIService extends BaseAIService {
     options?: ChatOptions
   ): Promise<AIServiceResponse> {
     try {
-      logger.info(`Sending chat request to Ollama`);
+      logger.info(`Sending chat request to Ollama (model: ${this.model})`);
       logger.debug(`Messages:`, messages);
-      logger.debug(`Tools:`, tools);
+      if (tools && tools.length > 0) {
+        logger.info(`Available tools: ${tools.map(t => t.name).join(', ')}`);
+        logger.debug(`Tool details:`, tools);
+      } else {
+        logger.info(`No tools provided to Ollama`);
+      }
       
       // Convert AI messages to OpenAI format
       const openaiMessages = this.convertToOpenAIMessages(messages);
@@ -76,10 +81,19 @@ export class OllamaAIService extends BaseAIService {
       }
       
       // Make API call
+      logger.debug(`Request params:`, JSON.stringify(requestParams, null, 2));
       const response = await this.client.chat.completions.create(requestParams);
       
       logger.info(`Received response from Ollama`);
       logger.debug(`Response:`, response);
+      
+      // Log tool calls if any
+      if (response.choices[0]?.message?.tool_calls) {
+        logger.info(`Ollama requested ${response.choices[0].message.tool_calls.length} tool calls:`);
+        response.choices[0].message.tool_calls.forEach((tc: any) => {
+          logger.info(`  - ${tc.function.name} with args: ${tc.function.arguments}`);
+        });
+      }
       
       // Parse response
       return this.parseOpenAIResponse(response);

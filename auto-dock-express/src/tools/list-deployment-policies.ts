@@ -6,7 +6,8 @@
 
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { executeHznCommand, getErrorMessage, formatJsonOutput } from './common';
+import { executeHznCommand, formatJsonOutput } from './common';
+import { getErrorMessage } from '../services/common';
 
 /**
  * Register the list-deployment-policies tool with the MCP server

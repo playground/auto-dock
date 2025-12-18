@@ -4,7 +4,8 @@
  * MCP tool for generating a service definition file for Open Horizon
  */
 
-import { executeHznCommand, getErrorMessage, getSuccessMessage, formatJsonOutput } from './common.js';
+import { formatJsonOutput } from './common';
+import { getErrorMessage, getSuccessMessage } from '../services/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
